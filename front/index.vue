@@ -1,60 +1,72 @@
 <template>
-  <div >
-      <div class="name">
-          2020.02.05. 정주영
+  <div>
+    <div class="name">
+      2020.02.05. 정주영
+    </div>
+    <div class="layout">
+      <div>
+        <form @submit="onSubmitForm">
+          <button class="login-button" type="submit">
+            <span>로그인</span>
+          </button>
+        </form>
       </div>
-      <div class="layout">
-            <div>
-            <form @submit="onSubmitForm">
-                <button class="login-button" type="submit">
-                    <span>로그인</span></button>
-            </form>
+      <div class="content-layout">
+        <div class="content-option-layout">
+          <div id="sort-layout">
+            <div id="sort-button" :class="ascKey" @click="onAscClick">
+              <p />
+              <span>오름차순</span>                
             </div>
-            <div class="content-layout">
-                <div class="content-option-layout">
-                    <div class="sort-layout">
-                        <div class="sort-button-on-layout">
-                            <p class="sort-button-on"></p>
-                            <span>오름차순</span>                
-                        </div>
-                        <div class="sort-button-off-layout">
-                            <p class="sort-button-off"></p>
-                            <span>내림차순</span>                
-                        </div>
-                    </div>
-                    <div>
-                        <button class="filter-button">
-                            <span>필터</span> 
-                            </button>
-                    </div>
-                </div>
-                    <post-card />  
-                    <ad-card />  
-                    <comment-form />  
+            <div id="sort-button" :class="descKey" @click="onDescClick">
+              <p />
+              <span>내림차순</span>                
             </div>
+          </div>
+          <div>
+            <button class="filter-button" @click="onFilterClick">
+              <span>필터</span> 
+            </button>
+          </div>
+        </div>
+        <post-card />  
+        <ad-card />          
       </div>
+    </div>
   </div> 
 </template>
 
 <script>
 import PostCard from './components/PostCard';
-import CommentForm from './components/CommentForm';
 import AdCard from './components/AdCard';
   export default {
    components: {
       PostCard,
-      CommentForm,
-      AdCard,
+           AdCard,
     },
     data() {
       return {
-       
-      }
+      ascKey: 'on',
+      descKey: 'off',
+             }
     },
-    computed: {},
+    computed: {
+
+    },
      methods: {
+        onAscClick() {
+        this.ascKey = 'on';
+        this.descKey = 'off';
+        },
+        onDescClick() {
+        this.ascKey = 'off';
+        this.descKey = 'on';
+        },
         onSubmitForm() {
-         
+
+        },
+        onFilterClick() {
+
         },
       }
   }
@@ -64,7 +76,7 @@ import AdCard from './components/AdCard';
 .layout{
     display:flex;
     justify-content:center;
-    align-items:center;
+    align-items:top;
 }
 .name{
     width:100%;
@@ -75,21 +87,21 @@ import AdCard from './components/AdCard';
 width: 865px;
 }
 .content-option-layout{
+    width: 865px;
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
-.sort-layout{
+#sort-layout{
     display: flex;
 }
-.sort-button-on-layout,
-.sort-button-off-layout{
+#sort-button{
     display:flex;
     justify-content:center;
     align-items:center;
     margin-right:6px;
    }
-.sort-button-on{
+#sort-button.on p{
   display:inline-block;
   width: 6px;
   height: 6px;
@@ -97,7 +109,7 @@ width: 865px;
   border-radius: 100%; 
   margin-right:5px;
 }
-.sort-button-on-layout span{
+#sort-button.on span{
   font-family: SpoqaHanSans;
   font-size: 13px;
   font-weight: normal;
@@ -108,7 +120,7 @@ width: 865px;
   text-align: left;
   color: #495057;
 }
-.sort-button-off{
+#sort-button.off p{
   display:inline-block;
   width: 6px;
   height: 6px;
@@ -116,7 +128,7 @@ width: 865px;
   border-radius: 100%;
   margin-right:5px;
 }
-.sort-button-off-layout span{
+#sort-button.off span{
   font-family: SpoqaHanSans;
   font-size: 13px;
   font-weight: normal;
@@ -129,7 +141,6 @@ width: 865px;
 }
 .filter-button{
   display:inline-block;
-  float:right;
   width: 48px;
   height: 24px;
   border-radius: 3px;
@@ -137,14 +148,11 @@ width: 865px;
   background-color: #ffffff;
 }
 .filter-button span{
-    width: 22px;
-  height: 16px;
   font-family: SpoqaHanSans;
   font-size: 13px;
   font-weight: normal;
   font-stretch: normal;
   font-style: normal;
-  line-height: 1.92;
   letter-spacing: normal;
   text-align: left;
   color: #adb5bd;
@@ -155,14 +163,14 @@ width: 865px;
   border-radius: 5px;
   background-color: #00c854;
   margin-right:40px;
+  border:none;
 }
  .login-button span{
-   font-family: SpoqaHanSans;
+  font-family: SpoqaHanSans;
   font-size: 22px;
   font-weight: bold;
   font-stretch: normal;
-  font-style: normal;
-  line-height: 1.14;
+  font-style: normal;  
   letter-spacing: normal;
   text-align: left;
   color: #ffffff;

@@ -28,7 +28,6 @@
 </script>
 <style>
 .ad-card-layout{
-  height: 255px;
   padding: 25px 30px 21px;
   border-radius: 5px;
   backdrop-filter: blur(30px);
@@ -61,15 +60,14 @@
     width: 435px;
 }
 .ad-card-title{
-    margin-bottom: 20px;
-    height: 46px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal; 
-    word-wrap: break-word; 
-    display: -webkit-box;
-     -webkit-line-clamp: 2; 
-    -webkit-box-orient: vertical;
+  margin-bottom: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; 
+  word-wrap: break-word; 
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
 }
 .ad-card-title span{
   font-family: SpoqaHanSans;
@@ -82,14 +80,13 @@
   color: #282c30;
 }
 .ad-card-contents{
-    height: 91px;
-   overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal; 
-    word-wrap: break-word; 
-    display: -webkit-box;
-     -webkit-line-clamp: 4; 
-    -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; 
+  word-wrap: break-word; 
+  display: -webkit-box;
+  -webkit-line-clamp: 4; 
+  -webkit-box-orient: vertical;
 }
 .ad-card-contents span{
   font-family: SpoqaHanSans;
@@ -102,4 +99,27 @@
   color: #495057;
 }
 
+@media (max-width: 768px){
+  .ad-card-layout{
+  padding: 25px 15px 21px;
+  border-radius: 0px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+  }
+  .ad-card-content-layout{
+      display:block;
+      }
+  .ad-card-image {
+    width: 100%;
+    margin: 17.5px 0 23.5px 0; 
+  }
+  .ad-card-text-layout{
+      width: 100%;
+  }
+  .ad-card-contents{
+    width: 100%;
+    -webkit-line-clamp: 2; 
+    
+  }
+
+}
 </style>

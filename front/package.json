@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1",
+    "lodash.throttle": "^4.1.1",
     "vue": "^2.6.12",
     "vue-router": "^3.4.9",
     "vuex": "^3.6.0"

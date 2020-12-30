@@ -1,7 +1,12 @@
 <template>
   <div>
     <div class="name">
-      2020.02.05. 정주영
+      <a @click="onBackClick">
+        <router-link to="/">
+          <span><</span>
+        </router-link>
+      </a>
+      <span>[2020.02.05.] 정주영</span>    
     </div>
     <div>
       <div class="comment-form-layout">
@@ -21,13 +26,13 @@
             <span class="created_at">created_at(YYYY-MM-dd)</span>
           </div>
         </div>   
-        <div class="reply-form-layout">
-          <div style="width: 1140px;">
+        <div class="reply-list-layout">
+          <div class="reply-info-layout">
             <span class="reply-info">답변</span>
             <span class="reply-number">{{ replyList.length }}</span>
           </div>
           <ul>
-            <li v-for="id in replyList" :key="id">
+            <li v-for="reply in replyList" :key="reply.id">
               <reply-form />
             </li>
           </ul>       
@@ -38,100 +43,126 @@
 </template>
 <script>
 import ReplyForm from './components/ReplyForm.vue';
+ import router from './routes';
 export default {
+    router,
    components: {
-     ReplyForm,
+     ReplyForm,   
     },
     data() {
       return {
     replyList:[{id:1},{id:2}],
              }
     },
-    computed: {
-
-    },
      methods: {
-      
+  //     onBackClick(){
+  // this.$router.push({
+  //           path: '/',
+  //           });
+  //     }
       }
   }
 </script>
-<style scoped>
+<style>
 .comment-form-layout{   
     display:flex;
-    justify-content:start;
+    justify-content:center;
     align-items:center;
     flex-direction:column;
+    margin-top:120px;
    }
 .name{
     width:100%;
-    height:70px;
     text-align:center;
+    position:fixed;
+    top:0;
+    left:0;
+    z-index: 200;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.07);
+    padding: 28px 1325px 23px 390px;
+    background: #fff;
+}
+.name a{
+  display:none;
 }
 .post-form-layout {
-  width: 1140px;
-  height: 211px;
-  padding: 28px 0 0 30px;
+  width: 70%;
+  padding: 28px 30px;
   border-radius: 5px;
   backdrop-filter: blur(30px);
   border: solid 1px #00c854;
   margin-bottom:30px;
   }
  .post-form-title{
-    width: 1011px;  
+  width: 100%;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word; 
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
      }
-  .post-form-title span{
-    font-family: SpoqaHanSans;
-    font-size: 18px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.56;
-    letter-spacing: normal;
-    text-align: left;
-    color: #282c30;
+.post-form-title span{
+  font-family: SpoqaHanSans;
+  font-size: 18px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.56;
+  letter-spacing: normal;
+  text-align: left;
+  color: #282c30;
+}
+.post-form-contents{
+   width: 100%;
+   margin: 15px 0 21px 0;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word; 
+  display: -webkit-box;
+  -webkit-line-clamp: 4; 
+  -webkit-box-orient: vertical;
   }
-   .post-form-contents{
-      width: 1017px;
-      margin: 15px 0 21px 0;
+.post-form-contents span{ 
+  font-family: SpoqaHanSans;
+  font-size: 16px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.56;
+  letter-spacing: normal;
+  text-align: left;
+  color: #495057;
+}
+.comment-form-created_at{
+  font-family: SpoqaHanSans;
+  font-size: 13px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.92;
+  letter-spacing: normal;
+  text-align: left;
+  color: #adb5bd;
+  width:100%;
+}
+.reply-list-layout{
+   width: 70%;
    }
-  .post-form-contents span{ 
-    font-family: SpoqaHanSans;
-    font-size: 16px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.56;
-    letter-spacing: normal;
-    text-align: left;
-    color: #495057;
-  }
-  .comment-form-created_at{
-    font-family: SpoqaHanSans;
-    font-size: 13px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.92;
-    letter-spacing: normal;
-    text-align: left;
-    color: #adb5bd;
-    width:100%;
-  }
-  .reply-form-layout{
-     display:flex;
-    justify-content:start;
-    align-items:center;
-    flex-direction:column;
-  }
-  .reply-info {
-    font-family: SpoqaHanSans;
-    font-size: 16px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;  
-    letter-spacing: normal;
-    text-align: left;
-    color: #495057;
+.reply-info-layout{
+  margin: 0 0 10px -40px;
+}
+.reply-info {
+  font-family: SpoqaHanSans;
+  font-size: 16px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;  
+  letter-spacing: normal;
+  text-align: left;
+  color: #495057;
 }
 .reply-number{
     font-family: SpoqaHanSans;
@@ -143,7 +174,60 @@ export default {
   text-align: left;
   color: #00c854;
 }
- ul{
-     list-style:none;
+ ul, li{
+    list-style:none;
+    margin-left: -40px !important;
+ }
+
+
+ @media (max-width: 768px){
+    body{
+        margin: 0px !important;
+        padding: 0px !important;
+          }
+    .comment-form-layout{   
+        margin: 65px 15px 0;
+      }
+    .name{  
+      padding: 16px 155px 10px 15px;    
+      }
+    .name a{
+      display: block;
+      width: 13px;
+      height: 22px; 
+      text-decoration: none;
+    }
+    .name > a > span{
+    font-family: SpoqaHanSans;
+      font-size: 22px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: 1.14;
+      letter-spacing: normal;
+      text-align: left;
+      color: #282c30;
+    }
+    .name > span{
+      display: none;
+    }
+    .post-form-layout {
+      width: 100%;
+      padding: 27px 0;
+      border-radius: 0px;
+      border:none;
+      border-top: solid 1px #00c854;
+      border-bottom: solid 1px #00c854;
+      margin-bottom:30px;
+      }
+    .reply-list-layout{
+      width: 100%;
+    }
+    .reply-info-layout{
+      margin:0;
+    }
+    ul, li{
+          margin-left: -25px !important;
+    }
  }
 </style>

@@ -42,15 +42,15 @@
                   </div>
                 </div>
                 <ul>
-                  <li v-for="category in categoryList" :key="category.id">
+                  <li v-for="category in categories" :key="category.id">
                     <div>
                       <input 
                         id="checkbox" 
                         v-model="checkedList"
-                        :value="'category'+category.id"
+                        :value="category.name"
                         type="checkbox"
                       >
-                      <span class="category_name">category_name</span>
+                      <span class="category_name">{{ category.name }}</span>
                     </div>
                   </li>
                 </ul> 
@@ -66,13 +66,7 @@
             </div>
           </div>
         </div>
-        <post-card v-for="post in mainPosts" :key="post.id" :post="post" /> 
-        <ad-card />          
-        <ad-card />          
-        <ad-card />          
-        <ad-card />          
-        <ad-card />          
-        <ad-card />          
+        <post-card v-for="post in mainPosts" :key="post.id" :post="post" />
       </div>
     </div>
   </div> 
@@ -80,34 +74,40 @@
 
 <script>
 import PostCard from './components/PostCard';
-import AdCard from './components/AdCard';
 import store from './store';
   export default {
     store,
    components: {
-      PostCard,
-      AdCard,
+      PostCard,     
     },
  
     data() {
       return {
+      ordkey: 'asc',
       ascKey: 'on',
       descKey: 'off',
       modalShow: false,
-      categoryList:[ {id:1}, {id:2}, {id:3}, ],
-      checkedList:["category1","category2","category3"],
+      checkedList:["category_0", "category_1", "category_2"],
+      checkedCategoryId:[],
                  }; 
     },
     
     computed: {
-    mainPosts() {
+      mainPosts() {
         return this.$store.state.mainPosts;
       },
       hasMorePost() {
         return this.$store.state.hasMorePost;
-      }
+      },
+      categories() {
+        return this.$store.state.categories;
+      },
     },
-  
+    created(){
+      this.$store.dispatch('loadAds',{ reset: true });
+      this.$store.dispatch('loadPosts');
+      this.$store.dispatch('loadCategories');
+         },
      mounted() {
       window.addEventListener('scroll', this.onScroll);
          },
@@ -118,10 +118,12 @@ import store from './store';
         onAscClick() {
         this.ascKey = 'on';
         this.descKey = 'off';
+        this.ordkey= 'asc';
         },
         onDescClick() {
         this.ascKey = 'off';
         this.descKey = 'on';
+        this.ordkey= 'desc';
         },
         onSubmitForm() {
          },
@@ -131,19 +133,22 @@ import store from './store';
         onModalCloseClick(){
           this.modalShow = false;
                  },
-        onSaveCategoryClick(){         
-          this.checkedList = ["category1","category2","category3"];
+        onSaveCategoryClick(){               
+          this.checkedList;
+            this.checkedCategoryId = this.checkedList.map(c=> c.charAt(c.length-1));  
            this.modalShow = false;
                 }, 
         onScroll() {
         console.log('scroll');
         if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
           if (this.hasMorePost) {
-            this.$store.commit('loadPosts');
+             this.$store.dispatch('loadAds');
+              this.$store.dispatch('loadPosts',{ord: this.ordkey, category:  this.checkedCategoryId});
+             
           }
         }
-      },      
-      }
+      }, 
+    }
   }
 </script>
 

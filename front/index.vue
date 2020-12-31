@@ -66,8 +66,12 @@
             </div>
           </div>
         </div>
-        <post-card /> 
-        <!-- <post-card v-for="p in mainPosts" :key="p.id" :post="p" />  -->
+        <post-card v-for="post in mainPosts" :key="post.id" :post="post" /> 
+        <ad-card />          
+        <ad-card />          
+        <ad-card />          
+        <ad-card />          
+        <ad-card />          
         <ad-card />          
       </div>
     </div>
@@ -77,12 +81,14 @@
 <script>
 import PostCard from './components/PostCard';
 import AdCard from './components/AdCard';
-
+import store from './store';
   export default {
+    store,
    components: {
       PostCard,
       AdCard,
     },
+ 
     data() {
       return {
       ascKey: 'on',
@@ -92,20 +98,19 @@ import AdCard from './components/AdCard';
       checkedList:["category1","category2","category3"],
                  }; 
     },
-     fetch({ store }) {
-      return store.dispatch('posts/loadPosts', { reset: true });
-    },
+    
     computed: {
     mainPosts() {
-        return this.$store.state.posts.mainPosts;
+        return this.$store.state.mainPosts;
       },
       hasMorePost() {
-        return this.$store.state.posts.hasMorePost;
+        return this.$store.state.hasMorePost;
       }
     },
-      mounted() {
+  
+     mounted() {
       window.addEventListener('scroll', this.onScroll);
-    },
+         },
     beforeDestroy() {
       window.removeEventListener('scroll', this.onScroll);
     },
@@ -130,11 +135,11 @@ import AdCard from './components/AdCard';
           this.checkedList = ["category1","category2","category3"];
            this.modalShow = false;
                 }, 
-                    onScroll() {
+        onScroll() {
         console.log('scroll');
         if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
           if (this.hasMorePost) {
-            this.$store.dispatch('posts/loadPosts');
+            this.$store.commit('loadPosts');
           }
         }
       },      

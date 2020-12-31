@@ -11,18 +11,38 @@
     <div>
       <div class="post-card-title">
         <span>
-          Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title
+          {{post.title}}
         </span>
       </div>
       <div class="post-card-contents">
         <span>
-          contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents
+          {{post.content}}
         </span>
       </div>
     </div>
   </div>
 </template>
 <script>
+ export default {
+    components: {
+     
+    },
+    props: {
+      post: {
+        type: Object,
+        required: true,
+      },
+    },
+    data() {
+      return {
+      
+      };
+    },
+    methods: {
+   
+    },
+  };
+
 </script>
 <style scoped>
 .post-card-layout {  

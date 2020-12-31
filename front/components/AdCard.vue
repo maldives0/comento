@@ -33,6 +33,7 @@
   backdrop-filter: blur(30px);
   border: solid 1px #e1e4e7;
   background-color: #ffffff;
+  margin-bottom:30px;
 }
 .sponsored{
   font-family: SpoqaHanSans;

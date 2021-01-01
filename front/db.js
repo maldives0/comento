@@ -21,7 +21,7 @@ module.exports = () => {
         });
 
         data.ads.push({
-            id: i,
+            id: i * 100,
             key: 'ad',
             title: `AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost AdPost`,
             content: "contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents",

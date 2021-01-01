@@ -23,11 +23,15 @@ export default new Vuex.Store({ // import store from './store';
     hasMorePost: true,
     ads: [],
     categories: [],
+    order: 'asc',
   }, // vue의 data와 비슷
   getters: {
 
   }, // vue의 computed와 비슷
   mutations: {
+    orderChange(state, payload) {
+      state.order = payload;
+    },
     loadAds(state, payload) {
       if (payload.reset) {
         state.ads = payload.data;
@@ -36,7 +40,7 @@ export default new Vuex.Store({ // import store from './store';
       }
     },
     loadPosts(state, payload) {
-      if (state.ads.length <= 11) {
+      if (payload.reset) {
         const postsList = Array(10).fill().map((v, i) => {
           if ((i + 1) % 4 !== 0) {
             return payload.data[i];
@@ -44,19 +48,22 @@ export default new Vuex.Store({ // import store from './store';
             return state.ads[i];
           }
         });
-        state.mainPosts = state.mainPosts.concat(postsList);
+        state.mainPosts = postsList;
       } else {
-        const postsList = Array(10).fill().map((v, i) => {
-          const id = (i + 1 + state.mainPosts.length);
-
-          if (id % 4 !== 0) {
-            return payload.data[i + 1];
-          } else {//i=12,16,20...
-            console.log(id + 1, state.ads[id + 1]);
-            return state.ads[id + 1];
-          }
-        });
-        state.mainPosts = state.mainPosts.concat(postsList);
+        if (payload.data.length === 10) {
+          const postsList = Array(10).fill().map((v, i) => {
+            const id = (i + 1 + state.mainPosts.length);
+            if (id % 4 !== 0) {
+              console.log('id:', id, payload.data[i]);
+              return payload.data[i];
+            } else {//i=12,16,20...           
+              return state.ads[id - 1];
+            }
+          });
+          state.mainPosts = state.mainPosts.concat(postsList);
+        } else {
+          state.mainPosts = state.mainPosts.concat(payload.data);
+        }
       }
       state.hasMorePost = payload.data.length === 10;
     },
@@ -66,21 +73,20 @@ export default new Vuex.Store({ // import store from './store';
   }, // state를 수정할 때, 동기적으로
   actions: {
     loadPosts: throttle(async function ({ commit, state }, payload) {
-      // console.log('loadPosts');
       try {
-        if (!payload && state.ads) {
-          const res = await axios.get(`/api/list?/api/list?_order=asc&_limit=10`);//json-server용
-          // const res = await axios.get(`/api/list?page=1&ord='asc'&category=[1,2,3]&limit=10`);
+        if (payload.reset && state.ads) {
+          const res = await axios.get(`/api/list?/_order=desc&_limit=10`);//json-server용
+          // const res = await axios.get(`/api/list?page=1&ord=${this.order}&category=[1,2,3]&limit=10`);
           commit('loadPosts', {
             data: res.data,
+            reset: true,
           });
           return;
         }
-        if (state.hasMorePost && state.mainPosts) {
-          const lastPage = Math.ceil(state.mainPosts[state.mainPosts.length - 1].id / 10);
-          const lastId = state.mainPosts[state.mainPosts.length - 1].id;//json-server용
-          const res = await axios.get(`/api/list?_start=${lastId}&_limit=10`);//json-server용
-          // const res = await axios.get(`/api/list?page=${lastPage}&ord=${ord}&category=${category}&limit=10`);
+        if (state.hasMorePost) {
+          const lastPage = state.mainPosts.length / 10;
+          const res = await axios.get(`/api/list?_start=${lastPage * 10}&_order=desc&_limit=10`);//json-server용
+          // const res = await axios.get(`/api/list?page=${lastPage}&ord=${this.order}&category=${payload.category}&limit=10`);
           commit('loadPosts', {
             data: res.data,
           });
@@ -89,23 +95,21 @@ export default new Vuex.Store({ // import store from './store';
       } catch (err) {
         console.error(err);
       }
-    }, 2000),
+    }, 3000),
     loadAds: throttle(async function ({ commit, state }, payload) {
-      // console.log('loadAds');
       try {
         if (payload && payload.reset) {
-          const res = await axios.get(`/api/ads?_limit=11`);//json-server용
+          const res = await axios.get(`/api/ads?_limit=10`);//json-server용
           // const res = await axios.get(`/api/ads?page=1&limit=10`);
-
           commit('loadAds', {
             data: res.data,
+            reset: true,
           });
           return;
         }
         if (state.hasMorePost) {
-          const lastPage = Math.ceil(state.mainPosts[state.mainPosts.length - 1].id / 10);
-          const lastId = state.mainPosts[state.mainPosts.length - 1].id;//json-server용
-          const res = await axios.get(`/api/ads?_start=${lastId}&_limit=11`);//json-server용
+          const lastPage = state.mainPosts.length / 10;
+          const res = await axios.get(`/api/ads?_start=${lastPage * 10}&_limit=10`);//json-server용
           // const res = await axios.get(`/api/ads?page=${lastPage}&limit=10`);
           commit('loadAds', {
             data: res.data,
@@ -115,7 +119,7 @@ export default new Vuex.Store({ // import store from './store';
       } catch (err) {
         console.error(err);
       }
-    }, 2000),
+    }, 3000),
     loadCategories({ commit }, payload) {
       axios.get(`/api/category`)
         .then((res) => {

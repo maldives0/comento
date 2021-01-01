@@ -14,11 +14,11 @@
       <div class="content-layout">
         <div class="content-option-layout">
           <div id="sort-layout">
-            <div id="sort-button" :class="ascKey" @click="onAscClick">
+            <div id="sort-button" :class="{on:ordKey}" @click="onToggleSort">
               <p />
               <span>오름차순</span>                
             </div>
-            <div id="sort-button" :class="descKey" @click="onDescClick">
+            <div id="sort-button" :class="{on: !ordKey}" @click="onToggleSort">
               <p />
               <span>내림차순</span>                
             </div>
@@ -83,15 +83,17 @@ import store from './store';
  
     data() {
       return {
-      ordkey: 'asc',
-      ascKey: 'on',
-      descKey: 'off',
+      ordKey: true,
       modalShow: false,
       checkedList : [],
+      ord:'asc',         
                       }; 
     },
     
     computed: {
+       order() {
+        return this.$store.state.order;
+      },
       mainPosts() {
         return this.$store.state.mainPosts;
       },
@@ -106,7 +108,7 @@ import store from './store';
     },
     created(){
       this.$store.dispatch('loadAds',{ reset: true });
-      this.$store.dispatch('loadPosts');
+      this.$store.dispatch('loadPosts',{ reset: true });
       this.$store.dispatch('loadCategories');        
                 },
      mounted() {            
@@ -116,16 +118,19 @@ import store from './store';
       window.removeEventListener('scroll', this.onScroll);
     },
      methods: {        
-        onAscClick() {
-        this.ascKey = 'on';
-        this.descKey = 'off';
-        this.ordkey= 'asc';
-        },
-        onDescClick() {
-        this.ascKey = 'off';
-        this.descKey = 'on';
-        this.ordkey= 'desc';
-        },
+        onToggleSort() {
+            this.ordKey= !this.ordKey;
+             if(!this.ordKey){
+                this.ord = 'desc';
+             }else{
+                 this.ord = 'asc';
+             }
+              if(this.order !== this.ord)  {                        
+              this.$store.commit('orderChange', this.ord);
+              this.$store.dispatch('loadAds',{ reset: true });
+              this.$store.dispatch('loadPosts',{ reset: true });
+              }
+            },
         onSubmitForm() {
          },
         onFilterClick() {
@@ -138,13 +143,12 @@ import store from './store';
            this.checkedList;     
            this.modalShow = false;           
                 }, 
-        onScroll() {
-        console.log('scroll');    
-        if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {         
-          if (this.hasMorePost) {
-             this.$store.dispatch('loadAds');
-              this.$store.dispatch('loadPosts',{ord: this.ordkey, category: this.checkedList.map(v=>v.id)});            
-          }
+        onScroll() {      
+        if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 200) {    
+            if (this.hasMorePost) { 
+              this.$store.dispatch('loadAds');
+              this.$store.dispatch('loadPosts',{category: this.checkedList.map(v=>v.id)});           
+           }
         }
       }, 
     }
@@ -207,7 +211,7 @@ import store from './store';
   text-align: left;
   color: #495057;
 }
-#sort-button.off p{
+#sort-button p{
   display:inline-block;
   width: 6px;
   height: 6px;
@@ -215,7 +219,7 @@ import store from './store';
   border-radius: 100%;
   margin-right:5px;
 }
-#sort-button.off span{
+#sort-button span{
   font-family: SpoqaHanSans;
   font-size: 13px;
   font-weight: normal;

@@ -36,9 +36,7 @@ export default new Vuex.Store({ // import store from './store';
       }
     },
     loadPosts(state, payload) {
-
-      if (state.ads) {
-
+      if (state.ads.length <= 11) {
         const postsList = Array(10).fill().map((v, i) => {
           if ((i + 1) % 4 !== 0) {
             return payload.data[i];
@@ -47,14 +45,15 @@ export default new Vuex.Store({ // import store from './store';
           }
         });
         state.mainPosts = state.mainPosts.concat(postsList);
-        console.log(state.mainPosts);
       } else {
         const postsList = Array(10).fill().map((v, i) => {
-          if ((i + 1 + state.mainPosts.length) % 4 !== 0) {
-            console.log(i + 1 + state.mainPosts.length);
-            return payload.data[i];
-          } else {//i=12,16,20
-            return state.ads[i];
+          const id = (i + 1 + state.mainPosts.length);
+
+          if (id % 4 !== 0) {
+            return payload.data[i + 1];
+          } else {//i=12,16,20...
+            console.log(id + 1, state.ads[id + 1]);
+            return state.ads[id + 1];
           }
         });
         state.mainPosts = state.mainPosts.concat(postsList);
@@ -67,12 +66,11 @@ export default new Vuex.Store({ // import store from './store';
   }, // state를 수정할 때, 동기적으로
   actions: {
     loadPosts: throttle(async function ({ commit, state }, payload) {
-      console.log('loadPosts');
+      // console.log('loadPosts');
       try {
         if (!payload && state.ads) {
           const res = await axios.get(`/api/list?/api/list?_order=asc&_limit=10`);//json-server용
           // const res = await axios.get(`/api/list?page=1&ord='asc'&category=[1,2,3]&limit=10`);
-
           commit('loadPosts', {
             data: res.data,
           });
@@ -80,8 +78,8 @@ export default new Vuex.Store({ // import store from './store';
         }
         if (state.hasMorePost && state.mainPosts) {
           const lastPage = Math.ceil(state.mainPosts[state.mainPosts.length - 1].id / 10);
-          console.log('lastPage', lastPage);
-          const res = await axios.get(`/api/list?/api/list?_order=asc&_limit=10`);//json-server용
+          const lastId = state.mainPosts[state.mainPosts.length - 1].id;//json-server용
+          const res = await axios.get(`/api/list?_start=${lastId}&_limit=10`);//json-server용
           // const res = await axios.get(`/api/list?page=${lastPage}&ord=${ord}&category=${category}&limit=10`);
           commit('loadPosts', {
             data: res.data,
@@ -93,10 +91,10 @@ export default new Vuex.Store({ // import store from './store';
       }
     }, 2000),
     loadAds: throttle(async function ({ commit, state }, payload) {
-      console.log('loadAds');
+      // console.log('loadAds');
       try {
         if (payload && payload.reset) {
-          const res = await axios.get(`/api/ads?_limit=10`);//json-server용
+          const res = await axios.get(`/api/ads?_limit=11`);//json-server용
           // const res = await axios.get(`/api/ads?page=1&limit=10`);
 
           commit('loadAds', {
@@ -105,7 +103,9 @@ export default new Vuex.Store({ // import store from './store';
           return;
         }
         if (state.hasMorePost) {
-          const res = await axios.get(`/api/ads?_limit=10`);//json-server용
+          const lastPage = Math.ceil(state.mainPosts[state.mainPosts.length - 1].id / 10);
+          const lastId = state.mainPosts[state.mainPosts.length - 1].id;//json-server용
+          const res = await axios.get(`/api/ads?_start=${lastId}&_limit=11`);//json-server용
           // const res = await axios.get(`/api/ads?page=${lastPage}&limit=10`);
           commit('loadAds', {
             data: res.data,

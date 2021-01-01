@@ -47,7 +47,7 @@
                       <input 
                         id="checkbox" 
                         v-model="checkedList"
-                        :value="category.name"
+                        :value="category"
                         type="checkbox"
                       >
                       <span class="category_name">{{ category.name }}</span>
@@ -87,9 +87,8 @@ import store from './store';
       ascKey: 'on',
       descKey: 'off',
       modalShow: false,
-      checkedList:["category_0", "category_1", "category_2"],
-      checkedCategoryId:[],
-                 }; 
+      checkedList : [],
+                      }; 
     },
     
     computed: {
@@ -100,15 +99,17 @@ import store from './store';
         return this.$store.state.hasMorePost;
       },
       categories() {
+        this.checkedList = this.$store.state.categories;    
         return this.$store.state.categories;
       },
+     
     },
     created(){
       this.$store.dispatch('loadAds',{ reset: true });
       this.$store.dispatch('loadPosts');
-      this.$store.dispatch('loadCategories');
-         },
-     mounted() {
+      this.$store.dispatch('loadCategories');        
+                },
+     mounted() {            
       window.addEventListener('scroll', this.onScroll);
          },
     beforeDestroy() {
@@ -133,18 +134,16 @@ import store from './store';
         onModalCloseClick(){
           this.modalShow = false;
                  },
-        onSaveCategoryClick(){               
-          this.checkedList;
-            this.checkedCategoryId = this.checkedList.map(c=> c.charAt(c.length-1));  
-           this.modalShow = false;
+        onSaveCategoryClick(){  
+           this.checkedList;     
+           this.modalShow = false;           
                 }, 
         onScroll() {
-        console.log('scroll');
-        if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+        console.log('scroll');    
+        if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {         
           if (this.hasMorePost) {
              this.$store.dispatch('loadAds');
-              this.$store.dispatch('loadPosts',{ord: this.ordkey, category:  this.checkedCategoryId});
-             
+              this.$store.dispatch('loadPosts',{ord: this.ordkey, category: this.checkedList.map(v=>v.id)});            
           }
         }
       }, 

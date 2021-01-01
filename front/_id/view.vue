@@ -8,18 +8,18 @@
       </a>
       <span>[2020.02.05.] 정주영</span>    
     </div>
+    
     <div>
       <div class="comment-form-layout">
         <div class="post-form-layout">
           <div class="post-form-title">
             <span>
-              Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title 
+              {{ viewPost.title }}
             </span>
           </div>
           <div class="post-form-contents">
             <span>
-              contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents conte
-              nts contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents
+              {{ viewPost.content }}
             </span>
           </div>
           <div class="comment-form-created_at">
@@ -42,25 +42,34 @@
   </div>
 </template>
 <script>
-import ReplyForm from './components/ReplyForm.vue';
- import router from './routes';
+import ReplyForm from '../components/ReplyForm';
+import store from '../store';
+import router from '../routes';
 export default {
-    router,
+   store,
+   router,
    components: {
      ReplyForm,   
     },
+    
     data() {
       return {
     replyList:[{id:1},{id:2}],
              }
     },
+    computed:{
+      viewPost() {
+        return this.$store.state.viewPost;
+      },
+      created(){
+        return this.$store.dispatch('loadViewPost', { postId: this.$route.params.id });
+      },
+    },
      methods: {
-  //     onBackClick(){
-  // this.$router.push({
-  //           path: '/',
-  //           });
-  //     }
-      }
+        onBackClick(){
+          this.$router.replace({path: '/'});
+        },
+      },
   }
 </script>
 <style>

@@ -1,44 +1,22 @@
 <template>
-  <div v-if="post.key !== 'ad'">
-    <div class="post-card-layout">
-      <div class="post-card-category">
-        <span class="category_name"> {{ post.category.name }}</span>
-        <span class="contents_id">contents_id</span>
-      </div>
-      <div class="post-card-user">
-        <span class="user_id">user_id</span>
-        <span class="created_at">created_at(YYYY-MM-dd)</span>
-      </div>
-      <div>
-        <div class="post-card-title">
-          <span>
-            {{ post.title }}
-          </span>
+  <router-link :to="{path:`/${post.id}`}" style="text-decoration: none">
+    <div v-if="post.key !== 'ad'">
+      <div class="post-card-layout">
+        <div class="post-card-category">
+          <span class="category_name"> {{ post.category.name }}</span>
+          <span class="contents_id">contents_id: {{ post.id }}</span>
         </div>
-        <div class="post-card-contents">
-          <span>
-            {{ post.content }}
-          </span>
+        <div class="post-card-user">
+          <span class="user_id">user_id</span>
+          <span class="created_at">created_at(YYYY-MM-dd)</span>
         </div>
-      </div>
-    </div>
-  </div>
-  <div v-else>
-    <div class="ad-card-layout">
-      <div class="ad-card-category">
-        <span class="sponsored">sponsored</span>
-      </div>
-      <div class="ad-card-content-layout">
-        <div class="ad-card-image">
-          <img src="post.src" alt="post.src">
-        </div>
-        <div class="ad-card-text-layout">
-          <div class="ad-card-title">
+        <div>
+          <div class="post-card-title">
             <span>
               {{ post.title }}
             </span>
           </div>
-          <div class="ad-card-contents">
+          <div class="post-card-contents">
             <span>
               {{ post.content }}
             </span>
@@ -46,18 +24,43 @@
         </div>
       </div>
     </div>
-  </div>
+    <div v-else>
+      <div class="ad-card-layout">
+        <div class="ad-card-category">
+          <span class="sponsored">sponsored</span>
+        </div>
+        <div class="ad-card-content-layout">
+          <div class="ad-card-image">
+            <img src="post.src" alt="post.src">
+          </div>
+          <div class="ad-card-text-layout">
+            <div class="ad-card-title">
+              <span>
+                {{ post.title }}
+              </span>
+            </div>
+            <div class="ad-card-contents">
+              <span>
+                {{ post.content }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </router-link>
 </template>
 <script>
+ import router from '../routes';
+
  export default {
-    components: {
-     
-    },
+    router,
     props: {
       post: {
         type: Object,
         required: true,
       },
+    
          },
     data() {
       return {
@@ -65,7 +68,7 @@
       };
     },
     methods: {
-   
+       
     },
   };
 
@@ -78,6 +81,8 @@
     backdrop-filter: blur(30px);
     border: solid 1px #e1e4e7;
     background:#fff;
+    cursor:pointer;
+    text-decoration: none;
   }
  .post-card-category{
        width: 100%;

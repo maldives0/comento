@@ -24,6 +24,7 @@ export default new Vuex.Store({ // import store from './store';
     ads: [],
     categories: [],
     order: 'asc',
+    viewPost: [],
   }, // vue의 data와 비슷
   getters: {
 
@@ -70,12 +71,15 @@ export default new Vuex.Store({ // import store from './store';
     loadCategories(state, payload) {
       state.categories = payload.data;
     },
+    loadViewPost(state, payload) {
+      state.viewPost = payload.data;
+    },
   }, // state를 수정할 때, 동기적으로
   actions: {
     loadPosts: throttle(async function ({ commit, state }, payload) {
       try {
         if (payload.reset && state.ads) {
-          const res = await axios.get(`/api/list?/_order=desc&_limit=10`);//json-server용
+          const res = await axios.get(`/api/list?/_order=asc&_limit=10`);//json-server용
           // const res = await axios.get(`/api/list?page=1&ord=${this.order}&category=[1,2,3]&limit=10`);
           commit('loadPosts', {
             data: res.data,
@@ -85,7 +89,7 @@ export default new Vuex.Store({ // import store from './store';
         }
         if (state.hasMorePost) {
           const lastPage = state.mainPosts.length / 10;
-          const res = await axios.get(`/api/list?_start=${lastPage * 10}&_order=desc&_limit=10`);//json-server용
+          const res = await axios.get(`/api/list?_start=${lastPage * 10}&_order=asc&_limit=10`);//json-server용
           // const res = await axios.get(`/api/list?page=${lastPage}&ord=${this.order}&category=${payload.category}&limit=10`);
           commit('loadPosts', {
             data: res.data,
@@ -124,6 +128,17 @@ export default new Vuex.Store({ // import store from './store';
       axios.get(`/api/category`)
         .then((res) => {
           commit('loadCategories', {
+            data: res.data,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    loadViewPost({ commit }, payload) {
+      axios.get(`/api/view/${payload.postId || ''}`)
+        .then((res) => {
+          commit('loadViewPost', {
             data: res.data,
           });
         })

@@ -14,8 +14,8 @@ module.exports = {
         rules: [{
             test: /\.vue$/,
             use: 'vue-loader',
-        },  
-         {
+        },
+        {
             test: /\.css$/,
             use: [
                 'vue-style-loader',
@@ -28,14 +28,14 @@ module.exports = {
             ]
         },
         {
-        test: /\.scss$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader'
-         ]
-       },       
-     ],
+            test: /\.scss$/,
+            use: [
+                'vue-style-loader',
+                'css-loader',
+                'sass-loader'
+            ]
+        },
+        ],
     },
     plugins: [
         new VueLoaderPlugin(),
@@ -44,5 +44,6 @@ module.exports = {
         filename: '[name].js',
         path: path.join(__dirname, 'dist'),
         publicPath: '/dist',
+        chunkFilename: '[name].js',
     },
 };

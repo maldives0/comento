@@ -60,14 +60,18 @@ export default {
     computed:{
       viewPost() {
         return this.$store.state.viewPost;
-      },
-      created(){
-        return this.$store.dispatch('loadViewPost', { postId: this.$route.params.id });
+      },       
+      beforeCreated({$route}){
+             
+        return Promise.resolve($route.params.id).then(res=>{
+        this.$store.dispatch('loadViewPost', { postId: res });
+         });
+        
       },
     },
      methods: {
         onBackClick(){
-          this.$router.replace({path: '/'});
+          this.$router.go(this.$router.currentRoute);
         },
       },
   }

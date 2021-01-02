@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import Home from './Home';
 
 Vue.use(VueRouter);
-
+const View = () => import(/* webpackChunkName: "view" */ './_id/view');
 export default new VueRouter({
     mode: 'history',
     base: __dirname,
@@ -15,7 +15,7 @@ export default new VueRouter({
         {
             path: '/:id',
             name: '',
-            component: () => import('./_id/view'),
+            component: View,
             params: true,
         },
 

@@ -6,20 +6,27 @@
   "scripts": {
     "build": "webpack --watch",
     "dev": "webpack-dev-server --hot",
-    "mock-server": "json-server --watch ./db.js -p 8081 --routes routes.json",
+    "mock-server": "json-server --watch ./server/db.js -p 8081 --routes ./server/routes.json",
     "lint": "eslint **/*",
     "start": "cross-env PORT=80 NODE_ENV=production npm run start"
   },
   "author": "정주영",
   "license": "MIT",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "axios": "^0.21.1",
+    "cross-env": "^7.0.3",
     "lodash.throttle": "^4.1.1",
     "vue": "^2.6.12",
     "vue-router": "^3.4.9",
-    "vuex": "^3.6.0"
+    "vuex": "^3.6.0",
+    "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "css-loader": "^5.0.1",
     "eslint": "^7.16.0",
     "eslint-plugin-vue": "^7.4.0",

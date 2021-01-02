@@ -1,8 +1,0 @@
-{
-    "/api/*": "/$1",
-    "/api/list/:page-:ord-:category-:limit":"/api/list?page=:page&ord=:ord&category=:category&limit=:limit",
-    "/articles\\?id=:id": "/posts/:id",
-    "/api/list/:_order-:_limit":"/api/list?_order=asc&_limit=10",
-    "/api/list/:_start-:_order-:_limit":"/api/list?_start=:_start&_order=:_order&_limit=10",
-    "/api/ads/:page-:_limit":"/api/ads?_limit=10"
-}

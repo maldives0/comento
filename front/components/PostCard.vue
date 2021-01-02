@@ -3,12 +3,12 @@
     <div v-if="post.key !== 'ad'">
       <div class="post-card-layout">
         <div class="post-card-category">
-          <span class="category_name"> {{ post.category.name }}</span>
+          <span class="category_name">{{ post.category[0].name }}</span>
           <span class="contents_id">contents_id: {{ post.id }}</span>
         </div>
         <div class="post-card-user">
-          <span class="user_id">user_id</span>
-          <span class="created_at">created_at(YYYY-MM-dd)</span>
+          <span class="user_id">{{ post.user_id }}</span>
+          <span class="created_at">created_at({{ post.created_at }})</span>
         </div>
         <div>
           <div class="post-card-title">
@@ -30,8 +30,11 @@
           <span class="sponsored">sponsored</span>
         </div>
         <div class="ad-card-content-layout">
-          <div class="ad-card-image">
-            <img src="post.src" alt="post.src">
+          <div class="ad-card-image-layout">
+            <p v-if="!post.src" class="ad-card-loading-image">
+              <span>로딩중...</span>
+            </p> 
+            <img v-else :src="post.src" alt="post.src">
           </div>
           <div class="ad-card-text-layout">
             <div class="ad-card-title">
@@ -128,7 +131,7 @@
   border-right : 1px solid #e1e4e7;
 }
 .created_at {
-   margin: 31px 126px 17px 5px;
+  padding-left: 10px;
   font-family: SpoqaHanSans;
   font-size: 13px;
   font-weight: normal;
@@ -195,13 +198,22 @@
         justify-content:center;
         align-items:center;
     }
-    .ad-card-image {
+    .ad-card-image-layout{     
+      margin: 17.5px 29.5px 0 0;
+      text-align:center;
+      vertical-align: middle;
+      line-height: 170px;
+    }
+    .ad-card-loading-image{
       width: 310px;
       height: 179px;
-      margin: 17.5px 29.5px 0 0;
-      border: solid 1px #e1e4e7;
-      background:#e1e4e7;
+      background:#e1e4e7;      
+      display: inline-block;
     }
+    .ad-card-image-layout img{
+     width: 310px;
+     height: 179px;
+        }
     .ad-card-text-layout{
         width: 435px;
     }
@@ -275,9 +287,13 @@
     .ad-card-content-layout{
     display:block;
     }
-    .ad-card-image {
+    .ad-card-image-layout {
     width: 100%;
-    margin: 17.5px 0 23.5px 0; 
+    margin: 17.5px 0 23.5px 0;    
+    }
+   .ad-card-image-layout img{
+    width: 344.5px;
+    height: 179px;
     }
     .ad-card-text-layout{
     width: 100%;

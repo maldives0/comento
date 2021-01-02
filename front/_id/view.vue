@@ -9,7 +9,7 @@
       <span>[2020.02.05.] 정주영</span>    
     </div>
     
-    <div>
+    <div class="stop-dragging">
       <div class="comment-form-layout">
         <div class="post-form-layout">
           <div class="post-form-title">
@@ -22,8 +22,9 @@
               {{ viewPost.content }}
             </span>
           </div>
-          <div class="comment-form-created_at">
-            <span class="created_at">created_at(YYYY-MM-dd)</span>
+          <div>
+            <span class="user_id">{{ viewPost.user_id }}</span>
+            <span class="created_at">created_at({{ viewPost.created_at }})</span>
           </div>
         </div>   
         <div class="reply-list-layout">
@@ -61,8 +62,7 @@ export default {
       viewPost() {
         return this.$store.state.viewPost;
       },       
-      beforeCreated({$route}){
-             
+      beforeCreated({$route}){             
         return Promise.resolve($route.params.id).then(res=>{
         this.$store.dispatch('loadViewPost', { postId: res });
          });
@@ -72,11 +72,20 @@ export default {
      methods: {
         onBackClick(){
           this.$router.go(this.$router.currentRoute);
+          // this.$router.push({path:'/'});
         },
       },
   }
 </script>
 <style>
+.stop-dragging
+{
+  -ms-user-select: none; 
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
 .comment-form-layout{   
     display:flex;
     justify-content:center;
@@ -95,6 +104,17 @@ export default {
     padding: 28px 1325px 23px 390px;
     background: #fff;
 }
+ .name span{
+    font-family: SpoqaHanSans;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.56;
+    letter-spacing: normal;
+    text-align: left;
+    color: #212529;
+    }
 .name a{
   display:none;
 }
@@ -105,6 +125,7 @@ export default {
   backdrop-filter: blur(30px);
   border: solid 1px #00c854;
   margin-bottom:30px;
+  background:#fff;
   }
  .post-form-title{
   width: 100%;
@@ -149,7 +170,8 @@ export default {
   text-align: left;
   color: #495057;
 }
-.comment-form-created_at{
+.created_at{
+  padding-left: 10px;
   font-family: SpoqaHanSans;
   font-size: 13px;
   font-weight: normal;
@@ -159,7 +181,19 @@ export default {
   letter-spacing: normal;
   text-align: left;
   color: #adb5bd;
-  width:100%;
+  }
+.user_id {
+  padding-right: 12px;
+  font-family: SpoqaHanSans;
+  font-size: 13px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.92;
+  letter-spacing: normal;
+  text-align: left;
+  color: #00c854;
+  border-right : 1px solid #e1e4e7;
 }
 .reply-list-layout{
    width: 70%;
@@ -197,6 +231,7 @@ export default {
     body{
         margin: 0px !important;
         padding: 0px !important;
+        background:#fff !important;
           }
     .comment-form-layout{   
         margin: 65px 15px 0;

@@ -82,6 +82,9 @@
             </div>
           </div>
         </div>
+        <div class="search-result">
+          <span>'{{ this.$route.params.value }}'와 관련된 총{{ searchPostsLength }}개의 게시글이 검색되었습니다.</span>
+        </div>
         <post-card v-for="post in mainPosts" :key="post.id" :post="post" />
       </div>    
     </div>
@@ -89,9 +92,9 @@
 </template>
 
 <script>
-import PostCard from './components/PostCard';
-import store from './store';
- import router from './routes';
+import PostCard from '../components/PostCard';
+import store from '../store';
+ import router from '../routes';
   export default {
    store,
    router,
@@ -113,6 +116,9 @@ import store from './store';
        order() {
         return this.$store.state.order;
       },
+      searchPostsLength(){
+        return this.$store.state.searchPostsLength;
+      },
       mainPosts() {
         return this.$store.state.mainPosts;
       },
@@ -126,9 +132,7 @@ import store from './store';
      
     },
     created(){
-      this.$store.dispatch('loadAds',{ reset: true });
-      this.$store.dispatch('loadPosts',{ reset: true });
-      this.$store.dispatch('loadCategories');        
+     
                 },
      mounted() {            
       window.addEventListener('scroll', this.onScroll);
@@ -147,16 +151,16 @@ import store from './store';
               if(this.order !== this.ord)  {                        
               this.$store.commit('orderChange', this.ord);
               this.$store.dispatch('loadAds',{ reset: true });
-              this.$store.dispatch('loadPosts',{ reset: true });
+              this.$store.dispatch('searchPosts',{ reset: true });
               }
             },
         onSubmitLoginForm() {
          },
         onSubmitSearchForm() {
-           this.$store.dispatch('loadAds',{ reset: true });
+             this.$store.dispatch('loadAds',{ reset: true });
             this.$store.dispatch('searchPosts',{ value: this.searchValue, category: this.checkedCategories.map(v=>v.id),
-            reset: true});
-             this.$router.push({path:`/search/${this.searchValue}`});
+            reset: true }); 
+               this.$router.push({path:`/search/${this.searchValue}`});
             this.searchValue = '';
             this.$refs.search.focus();
          },
@@ -170,12 +174,11 @@ import store from './store';
            this.checkedCategories;     
            this.modalShow = false;           
                 }, 
-        onScroll() {  
-           console.log('throttle',window.scrollY+document.documentElement.clientHeight, document.documentElement.scrollHeight);     
+        onScroll() {                
         if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 200) {    
             if (this.hasMorePost) { 
               this.$store.dispatch('loadAds');
-              this.$store.dispatch('loadPosts',{category: this.checkedCategories.map(v=>v.id)});           
+              this.$store.dispatch('searchPosts',{ value: this.searchValue, category: this.checkedCategories.map(v=>v.id)});           
            }
         }
       }, 
@@ -216,6 +219,18 @@ import store from './store';
     }
 .content-layout{
   width: 70%;
+}
+.search-result{
+    font-family: SpoqaHanSans;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.56;
+    letter-spacing: normal;
+    text-align: center;
+    color: #212529;
+    padding:5px 0;
 }
 .content-option-layout{
     display:flex;
@@ -472,7 +487,7 @@ input{
   .header{  
    padding: 16px 155px 10px 15px;    
   }
- 
+
   .content-layout{
     width: 100%;
   }

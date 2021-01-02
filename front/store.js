@@ -6,8 +6,8 @@ import Axios from 'axios';
 Vue.use(Vuex); // state.$store
 
 const axios = Axios.create({
-  browserBaseURL: process.env.NODE_ENV === 'production' ? 'https://problem.comento.kr/api' : 'http://localhost:8081/',
-  baseURL: process.env.NODE_ENV === 'production' ? 'https://problem.comento.kr/api' : 'http://localhost:8081/',
+  browserBaseURL: process.env.NODE_ENV === 'production' ? 'https://problem.comento.kr/api' : 'http://localhost:8081/api',
+  baseURL: process.env.NODE_ENV === 'production' ? 'https://problem.comento.kr/api' : 'http://localhost:8081/api',
   https: false,
   withCredentials: true,
   headers: {
@@ -25,6 +25,7 @@ export default new Vuex.Store({ // import store from './store';
     categories: [],
     order: 'asc',
     viewPost: [],
+    searchPostsLength: 0,
   }, // vue의 data와 비슷
   getters: {
 
@@ -32,6 +33,9 @@ export default new Vuex.Store({ // import store from './store';
   mutations: {
     orderChange(state, payload) {
       state.order = payload;
+    },
+    searchPostsLengthChange(state, payload) {
+      state.searchPostsLength = payload.total;
     },
     loadAds(state, payload) {
       if (payload.reset) {
@@ -55,7 +59,6 @@ export default new Vuex.Store({ // import store from './store';
           const postsList = Array(10).fill().map((v, i) => {
             const id = (i + 1 + state.mainPosts.length);
             if (id % 4 !== 0) {
-              console.log('id:', id, payload.data[i]);
               return payload.data[i];
             } else {//i=12,16,20...           
               return state.ads[id - 1];
@@ -74,13 +77,15 @@ export default new Vuex.Store({ // import store from './store';
     loadViewPost(state, payload) {
       state.viewPost = payload.data;
     },
+
   }, // state를 수정할 때, 동기적으로
   actions: {
     loadPosts: throttle(async function ({ commit, state }, payload) {
       try {
         if (payload.reset && state.ads) {
-          const res = await axios.get(`/api/list?/_order=asc&_limit=10`);//json-server용
-          // const res = await axios.get(`/api/list?page=1&ord=${this.order}&category=[1,2,3]&limit=10`);
+          //json-server용
+          const res = await axios.get(`/list?_order=${this.order}&_limit=10`);
+          // const res = await axios.get(`/list?page=1&ord=${this.order}&category=[1,2,3]&limit=10`);
           commit('loadPosts', {
             data: res.data,
             reset: true,
@@ -89,8 +94,9 @@ export default new Vuex.Store({ // import store from './store';
         }
         if (state.hasMorePost) {
           const lastPage = state.mainPosts.length / 10;
-          const res = await axios.get(`/api/list?_start=${lastPage * 10}&_order=asc&_limit=10`);//json-server용
-          // const res = await axios.get(`/api/list?page=${lastPage}&ord=${this.order}&category=${payload.category}&limit=10`);
+          //json-server용
+          const res = await axios.get(`/list?_start=${lastPage * 10}&_order=${this.order}&_limit=10`);
+          // const res = await axios.get(`/list?page=${lastPage}&ord=${this.order}&category=${payload.category}&limit=10`);
           commit('loadPosts', {
             data: res.data,
           });
@@ -103,8 +109,9 @@ export default new Vuex.Store({ // import store from './store';
     loadAds: throttle(async function ({ commit, state }, payload) {
       try {
         if (payload && payload.reset) {
-          const res = await axios.get(`/api/ads?_limit=10`);//json-server용
-          // const res = await axios.get(`/api/ads?page=1&limit=10`);
+          //json-server용
+          const res = await axios.get(`/ads?_limit=10`);
+          // const res = await axios.get(`/ads?page=1&limit=10`);
           commit('loadAds', {
             data: res.data,
             reset: true,
@@ -113,8 +120,9 @@ export default new Vuex.Store({ // import store from './store';
         }
         if (state.hasMorePost) {
           const lastPage = state.mainPosts.length / 10;
-          const res = await axios.get(`/api/ads?_start=${lastPage * 10}&_limit=10`);//json-server용
-          // const res = await axios.get(`/api/ads?page=${lastPage}&limit=10`);
+          //json-server용
+          const res = await axios.get(`/ads?_start=${lastPage * 10}&_limit=10`);
+          // const res = await axios.get(`/ads?page=${lastPage}&limit=10`);
           commit('loadAds', {
             data: res.data,
           });
@@ -124,28 +132,56 @@ export default new Vuex.Store({ // import store from './store';
         console.error(err);
       }
     }, 3000),
-    loadCategories({ commit }, payload) {
-      axios.get(`/api/category`)
-        .then((res) => {
-          commit('loadCategories', {
+    async loadCategories({ commit }, payload) {
+      try {
+        const res = await axios.get(`/category`)
+        commit('loadCategories', {
+          data: res.data,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async loadViewPost({ commit }, payload) {
+      try {
+        const res = await axios.get(`/view/${payload.postId || ''}`);
+        commit('loadViewPost', {
+          data: res.data,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    searchPosts: throttle(async function ({ commit, state }, payload) {
+      try {
+        if (payload.reset && state.ads) {
+          //json-server용
+          const res = await axios.get(`/search?_limit=10`);
+          //const res = await axios.get(`/search/${payload.value}?page=1&ord=${this.order}&category=[1,2,3]&limit=10`);
+          commit('loadPosts', {
+            data: res.data,
+            reset: true,
+          });
+          commit('searchPostsLengthChange', {
+            total: 21,
+          });
+          return;
+        }
+        if (state.hasMorePost) {
+          const lastPage = state.mainPosts.length / 10;
+          //json-server용
+          const res = await axios.get(`/search?_start=${lastPage * 10}&_order=${this.order}&_limit=10`);
+          //const res = await axios.get(`/serach/${payload.value}?page=${lastPage}&ord=${this.order}&category=${payload.category}&limit=10`);
+          commit('loadPosts', {
             data: res.data,
           });
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    loadViewPost({ commit }, payload) {
-      axios.get(`/api/view/${payload.postId || ''}`)
-        .then((res) => {
-          commit('loadViewPost', {
-            data: res.data,
-          });
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }, 3000),
+
 
   }, // 비동기를 사용할때, 또는 여러 뮤테이션을 연달아 실행할 때
 });

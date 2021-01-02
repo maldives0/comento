@@ -1,8 +1,11 @@
 <template>
-  <router-view />
+  <div>
+    <router-view />
+  </div>
 </template>
 
 <script>
+import '@babel/polyfill';
  import router from './routes';
   export default {  
    router,  

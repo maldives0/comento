@@ -54,10 +54,10 @@
   </router-link>
 </template>
 <script>
- import router from '../routes';
+
 
  export default {
-    router,
+
     props: {
       post: {
         type: Object,

@@ -1,6 +1,0 @@
-{
-    "/api/*": "/$1",
-    "/api/list/:_order-:_limit":"/api/list?_order=asc&_limit=10",
-    "/api/search/:_start-:_order-:_limit":"/api/search?_start=:_start&_order=asc&_limit=10",
-    "/api/list/:_start-:_order-:_limit":"/api/list?_start=:_start&_order=asc&_limit=10" 
-}

@@ -9,8 +9,8 @@ axios.defaults.baseURL = 'https://problem.comento.kr/api';
 axios.defaults.withCredentials = true;
 // GET 요청에 추가할 헤더 설정
 axios.defaults.headers.get['Content-Type'] = 'application/json;charset=utf-8';
-axios.defaults.headers.get['Access-Control-Allow-Origin'] = 'https://problem.comento.kr';
-axios.defaults.headers.get['Access-Control-Allow-Headers'] = 'https://problem.comento.kr';
+axios.defaults.headers.get['Access-Control-Allow-Origin'] = '*';
+axios.defaults.headers.get['Access-Control-Allow-Headers'] = '*';
 axios.defaults.headers.get['Access-Control-Allow-Methods'] = 'GET';
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;

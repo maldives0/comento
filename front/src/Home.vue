@@ -89,12 +89,10 @@
 </template>
 
 <script>
-import PostCard from './components/PostCard';
-import store from './store';
- import router from './routes';
+import PostCard from './components/PostCard.vue';
+
   export default {
-   store,
-   router,
+ 
    components: {
       PostCard,     
     },

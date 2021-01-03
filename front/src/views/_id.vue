@@ -43,12 +43,10 @@
   </div>
 </template>
 <script>
-import ReplyForm from '../components/ReplyForm';
-import store from '../store';
-import router from '../routes';
+import ReplyForm from '../components/ReplyForm.vue';
+
 export default {
-   store,
-   router,
+ 
    components: {
      ReplyForm,   
     },
@@ -61,13 +59,17 @@ export default {
     computed:{
       viewPost() {
         return this.$store.state.viewPost;
-      },       
-      beforeCreated({$route}){             
-        return Promise.resolve($route.params.id).then(res=>{
-        this.$store.dispatch('loadViewPost', { postId: res });
-         });
-        
+      },   
+      asyncData ({ store, route: { params: { id }}}) {
+      store.dispatch('loadViewPost', { postId: id });
       },
+    
+      // beforeCreated({$route}){             
+      //   return Promise.resolve($route.params.id).then(res=>{
+      //   this.$store.dispatch('loadViewPost', { postId: res });
+      //    });
+        
+      // },
     },
      methods: {
         onBackClick(){

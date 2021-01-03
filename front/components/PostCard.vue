@@ -1,6 +1,6 @@
 <template>
   <router-link :to="{path:`/${post.id}`}" style="text-decoration: none">
-    <div v-if="post.key !== 'ad'">
+    <div v-if="!post.img">
       <div class="post-card-layout">
         <div class="post-card-category">
           <span class="category_name">{{ post.category[0].name }}</span>
@@ -34,7 +34,7 @@
             <p v-if="!post.src" class="ad-card-loading-image">
               <span>로딩중...</span>
             </p> 
-            <img v-else :src="post.src" alt="post.src">
+            <img v-else :src="post.img" alt="post.src">
           </div>
           <div class="ad-card-text-layout">
             <div class="ad-card-title">

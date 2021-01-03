@@ -125,11 +125,12 @@ import store from './store';
       },
      
     },
-    created(){
+    beforeCreate(){
+      this.$store.dispatch('loadCategories');  
       this.$store.dispatch('loadAds',{ reset: true });
-      this.$store.dispatch('loadPosts',{ reset: true });
-      this.$store.dispatch('loadCategories');        
-                },
+         this.$store.dispatch('loadPosts',{ reset: true});
+    },
+   
      mounted() {            
       window.addEventListener('scroll', this.onScroll);
          },
@@ -147,7 +148,7 @@ import store from './store';
               if(this.order !== this.ord)  {                        
               this.$store.commit('orderChange', this.ord);
               this.$store.dispatch('loadAds',{ reset: true });
-              this.$store.dispatch('loadPosts',{ reset: true });
+              this.$store.dispatch('loadPosts',{ reset: true});
               }
             },
         onSubmitLoginForm() {

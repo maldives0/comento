@@ -62,7 +62,7 @@ export default {
       viewPost() {
         return this.$store.state.viewPost;
       },       
-      beforeCreated({$route}){             
+      beforeCreate({$route}){             
         return Promise.resolve($route.params.id).then(res=>{
         this.$store.dispatch('loadViewPost', { postId: res });
          });

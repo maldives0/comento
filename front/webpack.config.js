@@ -40,6 +40,14 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
     ],
+    devServer: {
+        proxy: {
+            '^/api': {
+                target: 'http://localhost:8080',
+                changeOrigin: true
+            },
+        }
+    },
     output: {
         filename: '[name].js',
         path: path.join(__dirname, 'dist'),

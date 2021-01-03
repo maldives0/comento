@@ -171,7 +171,7 @@ import store from './store';
            this.modalShow = false;           
                 }, 
         onScroll() {  
-           console.log('throttle',window.scrollY+document.documentElement.clientHeight, document.documentElement.scrollHeight);     
+           console.log('throttle',window.scrollY+document.documentElement.clientHeight, document.documentElement.scrollHeight-200);     
         if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 200) {    
             if (this.hasMorePost) { 
               this.$store.dispatch('loadAds');

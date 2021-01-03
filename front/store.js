@@ -1,21 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import throttle from 'lodash.throttle';
-import Axios from 'axios';
+import axios from 'axios';
 
 Vue.use(Vuex); // state.$store
+// baseURL 기본값
+axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? 'https://problem.comento.kr/api' : 'http://localhost:8081/api',
+  axios.defaults.withCredentials = true;
+// GET 요청에 추가할 헤더 설정
+axios.defaults.headers.get['Accepts'] = 'application/json'
+Vue.prototype.$axios = axios;
+Vue.config.productionTip = false
 
-const axios = Axios.create({
-  browserBaseURL: process.env.NODE_ENV === 'production' ? 'https://problem.comento.kr/api' : 'http://localhost:8081/api',
-  baseURL: process.env.NODE_ENV === 'production' ? 'https://problem.comento.kr/api' : 'http://localhost:8081/api',
-  https: false,
-  withCredentials: true,
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json'
-  }
-});
-Vue.use(axios); // state.$axios
 
 export default new Vuex.Store({ // import store from './store';
   state: {

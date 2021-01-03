@@ -2,7 +2,7 @@
 
 module.exports = () => {
     const data = {
-        api: [],
+
         list: [],
         ads: [],
         view: [],

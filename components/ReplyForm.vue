@@ -2,21 +2,20 @@
   <div>
     <div class="reply-form-layout">
       <div class="reply_user_name">
-        <span>reply_user_name </span>
+        <span>reply_user_name: {{ reply.user.name }}</span>
       </div>
       <div class="reply-form-contents">
         <span>
-          contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents contents
+          {{ reply.contents }}
         </span>
       </div>
       <div class="created_at">
-        <span>created_at(YYYY-MM-dd)</span>
+        <span>created_at({{ reply.created_at.substring(0,9) }})</span>
       </div>
     </div>   
   </div>
 </template>
-<script>
-</script>
+<script></script>
 <style scoped>
   .reply-form-layout{
      width: 100%;

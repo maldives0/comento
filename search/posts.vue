@@ -58,7 +58,7 @@
                   </div>
                 </div>
                 <ul>
-                  <li v-for="category in categories" :key="category.id">
+                  <li v-for="category in category" :key="category.id">
                     <div>
                       <input 
                         id="checkbox" 
@@ -85,7 +85,7 @@
         <div class="search-result">
           <span>'{{ this.$route.params.value }}'와 관련된 총{{ searchPostsLength }}개의 게시글이 검색되었습니다.</span>
         </div>
-        <post-card v-for="post in mainPosts" :key="post.id" :post="post" />
+        <post-card v-for="post in mainPosts.data" :key="post.id" :post="post" />
       </div>    
     </div>
   </div> 
@@ -125,9 +125,9 @@ import store from '../store';
       hasMorePost() {
         return this.$store.state.hasMorePost;
       },
-      categories() {
-        this.checkedCategories = this.$store.state.categories;    
-        return this.$store.state.categories;
+      category() {
+        this.checkedCategories = this.$store.state.category;    
+        return this.$store.state.category;
       },
      
     },

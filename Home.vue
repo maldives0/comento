@@ -58,15 +58,15 @@
                   </div>
                 </div>
                 <ul>
-                  <li v-for="category in categories" :key="category.id">
+                  <li v-for="category_list in category" :key="category_list.id">
                     <div>
                       <input 
                         id="checkbox" 
                         v-model="checkedCategories"
-                        :value="category"
+                        :value="category_list"
                         type="checkbox"
                       >
-                      <span class="category_name">{{ category.name }}</span>
+                      <span class="category_name">{{ category_list.name }}</span>
                     </div>
                   </li>
                 </ul> 
@@ -119,16 +119,16 @@ import store from './store';
       hasMorePost() {
         return this.$store.state.hasMorePost;
       },
-      categories() {
-        this.checkedCategories = this.$store.state.categories;    
-        return this.$store.state.categories;
+      category() {
+        this.checkedCategories = this.$store.state.category;    
+        return this.$store.state.category;
       },
      
     },
     beforeCreate(){
-      this.$store.dispatch('loadCategories');  
+      this.$store.dispatch('loadCategory');  
       this.$store.dispatch('loadAds',{ reset: true });
-         this.$store.dispatch('loadPosts',{ reset: true});
+      // this.$store.dispatch('loadPosts',{ reset: true});
     },
    
      mounted() {            
@@ -172,11 +172,10 @@ import store from './store';
            this.modalShow = false;           
                 }, 
         onScroll() {  
-           console.log('throttle',window.scrollY+document.documentElement.clientHeight, document.documentElement.scrollHeight);     
-        if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 200) {    
+          if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 200) {    
             if (this.hasMorePost) { 
               this.$store.dispatch('loadAds');
-              this.$store.dispatch('loadPosts',{category: this.checkedCategories.map(v=>v.id)});           
+              // this.$store.dispatch('loadPosts',{category: this.checkedCategories.map(v=>v.id)});           
            }
         }
       }, 

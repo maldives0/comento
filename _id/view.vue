@@ -23,18 +23,18 @@
             </span>
           </div>
           <div>
-            <span class="user_id">{{ viewPost.user_id }}</span>
-            <span class="created_at">created_at({{ viewPost.created_at }})</span>
+            <span class="user_id">user_id: {{ viewPost.user_id }}</span>
+            <span class="created_at">created_at({{ viewPost.created_at.substring(0,9) }})</span>
           </div>
         </div>   
         <div class="reply-list-layout">
           <div class="reply-info-layout">
             <span class="reply-info">답변</span>
-            <span class="reply-number">{{ replyList.length }}</span>
+            <span class="reply-number">{{ viewPost.reply.length }}</span>
           </div>
-          <ul>
-            <li v-for="reply in replyList" :key="reply.id">
-              <reply-form />
+          <ul v-if="replyShow">
+            <li>
+              <reply-form v-for="reply in viewPost.reply" :key="reply.id" :reply="reply" />
             </li>
           </ul>       
         </div>
@@ -55,19 +55,22 @@ export default {
     
     data() {
       return {
-    replyList:[{id:1},{id:2}],
+    replyShow : false,
              }
     },
     computed:{
-      viewPost() {
+      viewPost() {        
         return this.$store.state.viewPost;
-      },       
+      },    
+       replyList() {
+        return this.$store.state.replyList;
+      },   
       beforeCreate({$route}){             
         return Promise.resolve($route.params.id).then(res=>{
-        this.$store.dispatch('loadViewPost', { postId: res });
-         });
-        
+        this.$store.dispatch('loadViewPost', { postId: res }).then( this.replyShow = true);
+         });        
       },
+     
     },
      methods: {
         onBackClick(){

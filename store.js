@@ -9,9 +9,6 @@ axios.defaults.baseURL = 'https://problem.comento.kr/api';
 axios.defaults.withCredentials = true;
 // GET 요청에 추가할 헤더 설정
 axios.defaults.headers.get['Content-Type'] = 'application/json;charset=utf-8';
-axios.defaults.headers.get['Access-Control-Allow-Origin'] = '*';
-axios.defaults.headers.get['Access-Control-Allow-Headers'] = '*';
-axios.defaults.headers.get['Access-Control-Allow-Methods'] = 'GET';
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
@@ -21,7 +18,7 @@ export default new Vuex.Store({ // import store from './store';
     mainPosts: [],
     hasMorePost: true,
     ads: [],
-    categories: [],
+    category: [{ "id": 1, "name": "apple" }, { "id": 2, "name": "banana" }, { "id": 3, "name": "coconut" }],
     order: 'asc',
     viewPost: [],
     searchPostsLength: 0,
@@ -39,8 +36,10 @@ export default new Vuex.Store({ // import store from './store';
     loadAds(state, payload) {
       if (payload.reset) {
         state.ads = payload.data;
+        state.mainPosts = payload.data;
       } else {
         state.ads = state.ads.concat(payload.data);
+        // state.mainPosts = state.mainPosts.concat(payload.data);
       }
     },
     loadPosts(state, payload) {
@@ -70,8 +69,8 @@ export default new Vuex.Store({ // import store from './store';
       }
       state.hasMorePost = payload.data.length === 10;
     },
-    loadCategories(state, payload) {
-      state.categories = payload.data;
+    loadCategory(state, payload) {
+      state.category = payload.data;
     },
     loadViewPost(state, payload) {
       state.viewPost = payload.data;
@@ -81,23 +80,21 @@ export default new Vuex.Store({ // import store from './store';
   actions: {
     loadPosts: throttle(async function ({ commit, state }, payload) {
       try {
-
-        if (payload.reset && state.ads) {
-          const res = await axios.get(`/list?page=1&ord=${state.order}&category=[{id:1},{id:2},{id:3}]&limit=10`, {
-
-          });
+        const category_id = state.category.map(v => v.id);
+        // console.log(Array.isArray(category_id));
+        if (payload.reset && state.ads && state.category.length === 3) {
+          const res = await axios.get(`/list?page=1&ord=${state.order}&category=${category_id}&limit=10`);
           commit('loadPosts', {
-            data: res.data,
+            data: res.data.data,
             reset: true,
           });
           return;
         }
         if (state.hasMorePost) {
           const lastPage = state.mainPosts.length / 10;
-
           const res = await axios.get(`/list?page=${lastPage}&ord=${state.order}&category=${payload.category}&limit=10`);
           commit('loadPosts', {
-            data: res.data,
+            data: res.data.data,
           });
           return;
         }
@@ -108,20 +105,18 @@ export default new Vuex.Store({ // import store from './store';
     loadAds: throttle(async function ({ commit, state }, payload) {
       try {
         if (payload && payload.reset) {
-
           const res = await axios.get(`/ads?page=1&limit=10`);
           commit('loadAds', {
-            data: res.data,
+            data: res.data.data,
             reset: true,
           });
           return;
         }
         if (state.hasMorePost) {
           const lastPage = state.mainPosts.length / 10;
-
           const res = await axios.get(`/ads?page=${lastPage}&limit=10`);
           commit('loadAds', {
-            data: res.data,
+            data: res.data.data,
           });
           return;
         }
@@ -129,11 +124,11 @@ export default new Vuex.Store({ // import store from './store';
         console.error(err);
       }
     }, 3000),
-    async loadCategories({ commit }, payload) {
+    async loadCategory({ commit }, payload) {
       try {
         const res = await axios.get(`/category`)
-        commit('loadCategories', {
-          data: res.data,
+        commit('loadCategory', {
+          data: res.data.category,
         });
       } catch (err) {
         console.error(err);
@@ -141,9 +136,9 @@ export default new Vuex.Store({ // import store from './store';
     },
     async loadViewPost({ commit }, payload) {
       try {
-        const res = await axios.get(`/view/${payload.postId || ''}`);
+        const res = await axios.get(`/view?id=${payload.postId}`);
         commit('loadViewPost', {
-          data: res.data,
+          data: res.data.data,
         });
       } catch (err) {
         console.error(err);
@@ -152,10 +147,9 @@ export default new Vuex.Store({ // import store from './store';
     searchPosts: throttle(async function ({ commit, state }, payload) {
       try {
         if (payload.reset && state.ads) {
-
-          const res = await axios.get(`/search/${payload.value}?page=1&ord=${state.order}&category=[1,2,3]&limit=10`);
+          const res = await axios.get(`/search?value=${payload.value}?page=1&ord=${state.order}&category=[1,2,3]&limit=10`);
           commit('loadPosts', {
-            data: res.data,
+            data: res.data.data,
             reset: true,
           });
           commit('searchPostsLengthChange', {
@@ -165,10 +159,9 @@ export default new Vuex.Store({ // import store from './store';
         }
         if (state.hasMorePost) {
           const lastPage = state.mainPosts.length / 10;
-
-          const res = await axios.get(`/serach/${payload.value}?page=${lastPage}&ord=${state.order}&category=${payload.category}&limit=10`);
+          const res = await axios.get(`/serach?value=${payload.value}?page=${lastPage}&ord=${state.order}&category=${payload.category}&limit=10`);
           commit('loadPosts', {
-            data: res.data,
+            data: res.data.data,
           });
           return;
         }

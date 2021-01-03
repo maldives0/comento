@@ -8,7 +8,7 @@
         </div>
         <div class="post-card-user">
           <span class="user_id">{{ post.user_id }}</span>
-          <span class="created_at">created_at({{ post.created_at }})</span>
+          <span class="created_at">created_at({{ post.created_at.substring(0,9) }})</span>
         </div>
         <div>
           <div class="post-card-title">
@@ -18,7 +18,7 @@
           </div>
           <div class="post-card-contents">
             <span>
-              {{ post.content }}
+              {{ post.contents }}
             </span>
           </div>
         </div>
@@ -31,10 +31,10 @@
         </div>
         <div class="ad-card-content-layout">
           <div class="ad-card-image-layout">
-            <p v-if="!post.src" class="ad-card-loading-image">
+            <p v-if="!post.img" class="ad-card-loading-image">
               <span>로딩중...</span>
             </p> 
-            <img v-else :src="post.img" alt="post.src">
+            <img v-else :src="`https://cdn.comento.kr/assignment/${post.img}`" alt="post.img">
           </div>
           <div class="ad-card-text-layout">
             <div class="ad-card-title">
@@ -44,7 +44,7 @@
             </div>
             <div class="ad-card-contents">
               <span>
-                {{ post.content }}
+                {{ post.contents }}
               </span>
             </div>
           </div>
@@ -201,14 +201,14 @@
     .ad-card-image-layout{     
       margin: 17.5px 29.5px 0 0;
       text-align:center;
-      vertical-align: middle;
-      line-height: 170px;
+      vertical-align: middle;      
     }
     .ad-card-loading-image{
       width: 310px;
       height: 179px;
       background:#e1e4e7;      
       display: inline-block;
+      line-height: 170px;
     }
     .ad-card-image-layout img{
      width: 310px;
@@ -291,17 +291,12 @@
     width: 100%;
     margin: 17.5px 0 23.5px 0;    
     }
-   .ad-card-image-layout img{
-    width: 344.5px;
-    height: 179px;
-    }
     .ad-card-text-layout{
     width: 100%;
     }
     .ad-card-contents{
     width: 100%;
     -webkit-line-clamp: 2; 
-
     }
   }
 

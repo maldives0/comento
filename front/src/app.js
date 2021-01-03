@@ -11,11 +11,11 @@ export function createApp() {
 
     sync(store, router)
 
-    const index = new Vue({
+    const app = new Vue({
         router,
         store,
         render: h => h(App)
     })
 
-    return { index, router, store }
+    return { app, router, store }
 }

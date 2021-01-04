@@ -6,7 +6,6 @@
   "scripts": {
     "build": "webpack --watch",
     "dev": "webpack-dev-server --hot",
-    "mock-server": "json-server --watch ./server/db.js -p 8081 --routes ./server/routes.json",
     "lint": "eslint **/*",
     "start": "cross-env PORT=80 NODE_ENV=production npm run start"
   },
@@ -30,9 +29,6 @@
     "css-loader": "^5.0.1",
     "eslint": "^7.16.0",
     "eslint-plugin-vue": "^7.4.0",
-    "json-server": "^0.16.3",
-    "node-sass": "^5.0.0",
-    "sass-loader": "^10.1.0",
     "vue-loader": "^15.9.6",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.12",

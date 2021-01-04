@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <span>[2020.02.05.] 정주영</span> 
+      <span>[2020.02.04.] 정주영</span> 
       <div class="search-button-layout">
         <form @submit.prevent="onSubmitSearchForm">
           <input 

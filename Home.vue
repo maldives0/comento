@@ -22,8 +22,7 @@
             </button>
           </form>
         </div>
-      </div>
-     
+      </div>     
       <div class="content-layout">     
         <div class="content-option-layout">
           <div id="sort-layout">
@@ -37,81 +36,54 @@
             </div>
           </div>
           <div>
-            <div v-for="checkedCategory in checkedCategories" :key="checkedCategory.id" class="checkedCategory-layout">
-              <span class="checkedCategory_name">{{ checkedCategory.name }}</span>
+            <div v-for="category in checkedCategory" :key="category.id" class="checkedCategory-list-layout">
+              <span 
+                class="checkedCategory_name"
+              >{{ category.name }}</span>
             </div>
             <button class="filter-button" @click="onFilterClick">
               <span>필터</span> 
             </button>
-            <div v-if="modalShow" class="filter-modal-overlay">
-              <div class="filter-modal-layout">
-                <div class="filter-modal-header">
-                  <span>필터</span>
-                  <div 
-                    class="filter-modal-close-button"
-                    @click="onModalCloseClick"
-                  >
-                    <a>
-                      <span />
-                      <span />
-                    </a>
-                  </div>
-                </div>
-                <ul>
-                  <li v-for="category_list in category" :key="category_list.id">
-                    <div>
-                      <input 
-                        id="checkbox" 
-                        v-model="checkedCategories"
-                        :value="category_list"
-                        type="checkbox"
-                      >
-                      <span class="category_name">{{ category_list.name }}</span>
-                    </div>
-                  </li>
-                </ul> 
-                <div class="filter-modal-save-layout">
-                  <button 
-                    class="filter-modal-save-button"
-                    @click="onSaveCategoryClick"
-                  >
-                    저장하기
-                  </button>  
-                </div>            
-              </div>
-            </div>
+            <template v-if="modalShow">
+              <Modal />
+            </template>
           </div>
-        </div>
-        <post-card v-for="post in mainPosts" :key="post.id" :post="post" />
+        </div>         
+        <template v-if="mainPosts !== undefined && mainPosts.length > 0 ">
+          <post-card v-for="post in mainPosts" :key="post.id" :post="post" />
+        </template>
       </div>    
     </div>
   </div> 
 </template>
 
 <script>
+import Modal from './components/Modal';
 import PostCard from './components/PostCard';
-import store from './store';
+ import store from './store';
  import router from './routes';
+ 
   export default {
    store,
    router,
    components: {
-      PostCard,     
+      PostCard,
+      Modal,     
     },
  
     data() {
       return {
       ordKey: true,
-      modalShow: false,
-      checkedCategories : [],
       ord:'asc', 
-      searchValue:'',        
-                      }; 
+      searchValue:'', 
+              }; 
     },
-    
     computed: {
-       order() {
+      order() {
         return this.$store.state.order;
+      },
+      modalShow() {
+        return this.$store.state.modalShow;
       },
       mainPosts() {
         return this.$store.state.mainPosts;
@@ -119,16 +91,15 @@ import store from './store';
       hasMorePost() {
         return this.$store.state.hasMorePost;
       },
-      category() {
-        this.checkedCategories = this.$store.state.category;    
-        return this.$store.state.category;
-      },
-     
+      checkedCategory() {         
+        return this.$store.state.checkedCategory;
+      },    
+               
     },
-    beforeCreate(){
+      beforeCreate(){
       this.$store.dispatch('loadCategory');  
       this.$store.dispatch('loadAds',{ reset: true });
-      // this.$store.dispatch('loadPosts',{ reset: true});
+      this.$store.dispatch('loadPosts',{ reset: true});
     },
    
      mounted() {            
@@ -155,31 +126,25 @@ import store from './store';
          },
         onSubmitSearchForm() {
            this.$store.dispatch('loadAds',{ reset: true });
-            this.$store.dispatch('searchPosts',{ value: this.searchValue, category: this.checkedCategories.map(v=>v.id),
-            reset: true});
+            this.$store.dispatch('searchPosts',{ value: this.searchValue,
+            category: this.category.map(v=>v.id),
+            reset: true
+            });
              this.$router.push({path:`/search/${this.searchValue}`});
             this.searchValue = '';
             this.$refs.search.focus();
          },
         onFilterClick() {
-          this.modalShow = true;        
-        },
-        onModalCloseClick(){
-          this.modalShow = false;
-                 },
-        onSaveCategoryClick(){  
-           this.checkedCategories;     
-           this.modalShow = false;           
-                }, 
-        onScroll() {  
-          if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 200) {    
+          return this.$store.commit('modalShowChange', true);       
+        },        
+        onScroll() {           
+          if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 400) {                           
             if (this.hasMorePost) { 
               this.$store.dispatch('loadAds');
-              // this.$store.dispatch('loadPosts',{category: this.checkedCategories.map(v=>v.id)});           
+             this.$store.dispatch('loadPosts');     
            }
         }
-      }, 
-    
+      },    
     }
   }
 </script>
@@ -270,7 +235,7 @@ import store from './store';
   text-align: left;
   color: #adb5bd;
 }
-.checkedCategory-layout{
+.checkedCategory-list-layout{
   display:inline-block;
   margin-right:5px;
 }
@@ -304,9 +269,7 @@ import store from './store';
   text-align: left;
   color: #adb5bd;
   }
-.login-button-layout{
-  margin-bottom:30px;
-}
+
 .login-button-layout button{
   width: 235px;
   height: 60px; 
@@ -327,7 +290,6 @@ import store from './store';
   color: #ffffff;
     }
 .search-button-layout {
-    display:inline-block;
     margin-right: 50px;
     float: right;
    }   
@@ -354,107 +316,11 @@ import store from './store';
     text-align: left;
     color: #ffffff;
     }    
-.filter-modal-overlay{
-  width: 100vw;
-  height: 100vh;
-  position:fixed;
-  z-index: 5000;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  background-color: rgba(0,0,0,0.7);
-}
-.filter-modal-layout{
-  width: 460px;
-  height: 268px;
-  padding: 36px 30px;
-  background-color: #ffffff;
-  position:relative;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-}
-.filter-modal-header{
-   font-family: SpoqaHanSans;
-  font-size: 22px;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 1.45;
-  letter-spacing: normal;
-  text-align: left;
-  color: #212529;
-}
-.filter-modal-close-button{
-  position: fixed;
-  right: 15px;
-  top: 15px;
-  z-index: 200;
-}
-.filter-modal-close-button a{
-    display: block;
-    width: 12px;
-    height: 12px;
-}
-.filter-modal-close-button span{
-  display: block;
-  position: absolute;
-  right: 15px;
-  top:15px;
-  background: #adb5bd;
-  width: 100%;
-  height: 2px;
-  transform: rotate(-45deg);
-}
-.filter-modal-close-button span:nth-of-type(2){
-   transform: rotate(45deg);
-  
-}
-.category_name{
-  font-family: SpoqaHanSans;
-  font-size: 16px;
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 2;
-  letter-spacing: normal;
-  text-align: left;
-  color: #495057;
+  input{
+  width: 20px;
+  height: 20px;
+  margin-right:5px;
   }
-.filter-modal-save-layout{
- margin-top: 30px;
- float:right;
-  }
-.filter-modal-save-button{
-  width: 99px;
-  height: 40px;
-  border-radius: 3px;
-  background-color: #00c854;
-   font-family: SpoqaHanSans;
-  font-size: 16px;
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 2;
-  letter-spacing: normal;
-  color: #ffffff;
-  border:0;
-  outline:0;
-}
- ul, li{
-    list-style:none;
-    margin-left: -20px !important;
- }
-li{
-  margin-bottom:19px;
-}
-input{
- width: 20px;
- height: 20px;
- margin-right:5px;
-}
-
 
 @media (max-width: 768px){
   body{
@@ -470,9 +336,8 @@ input{
     display:none;
   }
   .header{  
-   padding: 16px 155px 10px 15px;    
-  }
- 
+   padding: 15px;    
+  } 
   .content-layout{
     width: 100%;
   }
@@ -480,19 +345,12 @@ input{
     padding: 10px 15px 10px 18px;
     background:#fff;
     }
-  .filter-modal-layout{
-    width: 337px;
-    top:45%;
-    padding: 36px 30px;
- }
-  .filter-modal-save-layout{
-  margin-top: 30px;
-  float:right;
-  width: 100%;
-    }
-  .filter-modal-save-button{
-    width: 100%;    
-  } 
+
+}
+  @media (max-width: 484px){
+  .header > span{
+    display:none;
+  }
 }
 
 </style>

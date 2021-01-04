@@ -4,11 +4,11 @@ import throttle from 'lodash.throttle';
 import axios from 'axios';
 
 Vue.use(Vuex);
-// baseURL 기본값
+
 axios.defaults.baseURL = 'https://problem.comento.kr/api';
 axios.defaults.withCredentials = true;
-// GET 요청에 추가할 헤더 설정
 axios.defaults.headers.get['Content-Type'] = 'application/json;charset=utf-8';
+
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
@@ -18,28 +18,29 @@ export default new Vuex.Store({ // import store from './store';
     mainPosts: [],
     hasMorePost: true,
     ads: [],
-    category: [{ "id": 1, "name": "apple" }, { "id": 2, "name": "banana" }, { "id": 3, "name": "coconut" }],
+    category: [],
+    checkedCategory: [{ "id": 1, "name": "apple" }, { "id": 2, "name": "banana" }, { "id": 3, "name": "coconut" }],
     order: 'asc',
     viewPost: [],
+    modalShow: false,
     searchPostsLength: 0,
   }, // vue의 data와 비슷
-  getters: {
-
-  }, // vue의 computed와 비슷
   mutations: {
     orderChange(state, payload) {
       state.order = payload;
     },
-    searchPostsLengthChange(state, payload) {
+    modalShowChange(state, payload) {
+      state.modalShow = payload;
+    },
+
+    changeSearchPostsLength(state, payload) {
       state.searchPostsLength = payload.total;
     },
     loadAds(state, payload) {
       if (payload.reset) {
         state.ads = payload.data;
-        state.mainPosts = payload.data;
       } else {
         state.ads = state.ads.concat(payload.data);
-        // state.mainPosts = state.mainPosts.concat(payload.data);
       }
     },
     loadPosts(state, payload) {
@@ -72,6 +73,10 @@ export default new Vuex.Store({ // import store from './store';
     loadCategory(state, payload) {
       state.category = payload.data;
     },
+    updateCategory(state, payload) {
+      console.log('check', payload);
+      state.checkedCategory = payload;
+    },
     loadViewPost(state, payload) {
       state.viewPost = payload.data;
     },
@@ -80,19 +85,19 @@ export default new Vuex.Store({ // import store from './store';
   actions: {
     loadPosts: throttle(async function ({ commit, state }, payload) {
       try {
-        const category_id = state.category.map(v => v.id);
-        // console.log(Array.isArray(category_id));
-        if (payload.reset && state.ads && state.category.length === 3) {
-          const res = await axios.get(`/list?page=1&ord=${state.order}&category=${category_id}&limit=10`);
+        const category_id = state.checkedCategory.map(v => `&category[]=${v.id}`);
+        if (payload && payload.reset && state.ads) {
+          const res = await axios.get(`/list?page=1&ord=${state.order}${category_id.concat().join("")}&limit=10`);
+
           commit('loadPosts', {
             data: res.data.data,
             reset: true,
           });
           return;
         }
-        if (state.hasMorePost) {
-          const lastPage = state.mainPosts.length / 10;
-          const res = await axios.get(`/list?page=${lastPage}&ord=${state.order}&category=${payload.category}&limit=10`);
+        const lastPage = state.mainPosts.length / 10;
+        if (state.hasMorePost && state.ads.length !== lastPage * 10) {
+          const res = await axios.get(`/list?page=${lastPage + 1}&ord=${state.order}${category_id.concat().join("")}&limit=10`);
           commit('loadPosts', {
             data: res.data.data,
           });
@@ -101,7 +106,7 @@ export default new Vuex.Store({ // import store from './store';
       } catch (err) {
         console.error(err);
       }
-    }, 3000),
+    }, 2000),
     loadAds: throttle(async function ({ commit, state }, payload) {
       try {
         if (payload && payload.reset) {
@@ -112,9 +117,9 @@ export default new Vuex.Store({ // import store from './store';
           });
           return;
         }
-        if (state.hasMorePost) {
-          const lastPage = state.mainPosts.length / 10;
-          const res = await axios.get(`/ads?page=${lastPage}&limit=10`);
+        const lastPage = state.mainPosts.length / 10;
+        if (state.hasMorePost && state.ads.length === lastPage * 10) {
+          const res = await axios.get(`/ads?page=${lastPage + 1}&limit=10`);
           commit('loadAds', {
             data: res.data.data,
           });
@@ -123,7 +128,7 @@ export default new Vuex.Store({ // import store from './store';
       } catch (err) {
         console.error(err);
       }
-    }, 3000),
+    }, 2000),
     async loadCategory({ commit }, payload) {
       try {
         const res = await axios.get(`/category`)
@@ -146,20 +151,18 @@ export default new Vuex.Store({ // import store from './store';
     },
     searchPosts: throttle(async function ({ commit, state }, payload) {
       try {
-        if (payload.reset && state.ads) {
-          const res = await axios.get(`/search?value=${payload.value}?page=1&ord=${state.order}&category=[1,2,3]&limit=10`);
+        const category_id = state.checkedCategory.map(v => `&category[]=${v.id}`);
+        if (payload && payload.reset && state.ads) {
+          const res = await axios.get(`/search?value=${payload.value}?page=1&ord=${state.order}${category_id.concat().join("")}&limit=10`);
           commit('loadPosts', {
             data: res.data.data,
             reset: true,
           });
-          commit('searchPostsLengthChange', {
-            total: 21,
-          });
           return;
         }
-        if (state.hasMorePost) {
-          const lastPage = state.mainPosts.length / 10;
-          const res = await axios.get(`/serach?value=${payload.value}?page=${lastPage}&ord=${state.order}&category=${payload.category}&limit=10`);
+        const lastPage = state.mainPosts.length / 10;
+        if (state.hasMorePost && state.ads.length !== lastPage * 10) {
+          const res = await axios.get(`/serach?value=${payload.value}?page=${lastPage}&ord=${state.order}${category_id.concat().join("")}&limit=10`);
           commit('loadPosts', {
             data: res.data.data,
           });
@@ -168,7 +171,7 @@ export default new Vuex.Store({ // import store from './store';
       } catch (err) {
         console.error(err);
       }
-    }, 3000),
+    }, 2000),
 
 
   }, // 비동기를 사용할때, 또는 여러 뮤테이션을 연달아 실행할 때

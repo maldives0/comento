@@ -3,12 +3,12 @@
     <div v-if="!post.img">
       <div class="post-card-layout">
         <div class="post-card-category">
-          <span class="category_name">{{ post.category[0].name }}</span>
+          <span class="category_name">category_id: {{ post.category_id }}</span>
           <span class="contents_id">contents_id: {{ post.id }}</span>
         </div>
         <div class="post-card-user">
-          <span class="user_id">{{ post.user_id }}</span>
-          <span class="created_at">created_at({{ post.created_at.substring(0,9) }})</span>
+          <span class="user_id">user_id: {{ post.user_id }}</span>
+          <span class="created_at">created_at({{ post.created_at.substring(0,9) || '' }})</span>
         </div>
         <div>
           <div class="post-card-title">

@@ -43,7 +43,7 @@
               <span>필터</span> 
             </button>
             <template v-if="modalShow">
-              <Modal />
+              <filter-modal />
             </template>
           </div>
         </div>  
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import Modal from '../components/Modal';
+import FilterModal from '../components/FilterModal';
 import PostCard from '../components/PostCard';
 import store from '../store';
  import router from '../routes';
@@ -68,7 +68,7 @@ import store from '../store';
    router,
    components: {
       PostCard,
-        Modal,      
+        FilterModal,      
     },
  
      data() {

@@ -96,16 +96,15 @@ import store from '../store';
       },    
      
     },
-    beforeCreate(){
+    created(){
       this.$store.dispatch('loadCategory');  
-      this.$store.dispatch('loadAds',{ reset: true });
-      this.$store.dispatch('loadPosts',{ reset: true});
+      this.$store.dispatch('loadAds',{ reset: true });     
     },
    
      mounted() {            
       window.addEventListener('scroll', this.onScroll);
          },
-    beforeDestroy() {
+     beforeDestroy() {
       window.removeEventListener('scroll', this.onScroll);
     },
      methods: {        
@@ -119,8 +118,7 @@ import store from '../store';
               if(this.order !== this.ord)  {                        
               this.$store.commit('orderChange', this.ord);
               this.$store.dispatch('loadAds',{ reset: true });
-              this.$store.dispatch('loadPosts',{ reset: true});
-              }
+                            }
             },
         onSubmitLoginForm() {
          },
@@ -139,14 +137,16 @@ import store from '../store';
         return this.$store.commit('modalShowChange', true); ;        
         },            
         onScroll() {  
-          console.log('throttle',window.scrollY+document.documentElement.clientHeight,'total', document.documentElement.scrollHeight);     
-          if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 400) {    
+          if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {    
             if (this.hasMorePost) { 
-              this.$store.dispatch('loadAds');
-             this.$store.dispatch('loadPosts');           
+              this.$store.dispatch('loadAds'); 
+               this.scrollToUp();                
            }
         }
-      },    
+      }, 
+        scrollToUp: function() {       
+      document.documentElement.scrollTop = document.documentElement.scrollHeight/2 + 300;
+    },      
     }
   }
 </script>

@@ -64,22 +64,13 @@ export default {
    components: {
        
     },
-    
-    data() {
-      return {
-   
-             }
-    },
+
     computed:{
       viewPost() {        
         return this.$store.state.viewPost;
       },    
-      beforeCreate({$route}){             
-        return Promise.resolve($route.params.id).then(res=>{
-          if(res){
-            this.$store.dispatch('loadViewPost', { postId: res });
-          }       
-         });        
+      created({$route}){             
+        return this.$store.dispatch('loadViewPost', { postId: $route.params.id });
       },
      
     },

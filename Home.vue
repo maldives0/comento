@@ -96,20 +96,19 @@ import PostCard from './components/PostCard';
       },    
                
     },
-      beforeCreate(){
+      created(){
       this.$store.dispatch('loadCategory');  
-      this.$store.dispatch('loadAds',{ reset: true });
-      this.$store.dispatch('loadPosts',{ reset: true});
+      this.$store.dispatch('loadAds',{ reset: true });     
     },
    
      mounted() {            
       window.addEventListener('scroll', this.onScroll);
          },
-    beforeDestroy() {
-      window.removeEventListener('scroll', this.onScroll);
-    },
-     methods: {        
-        onToggleSort() {
+      beforeDestroy() {
+        window.removeEventListener('scroll', this.onScroll);
+      },
+      methods: {        
+          onToggleSort() {
             this.ordKey= !this.ordKey;
              if(!this.ordKey){
                 this.ord = 'desc';
@@ -119,8 +118,7 @@ import PostCard from './components/PostCard';
               if(this.order !== this.ord)  {                        
               this.$store.commit('orderChange', this.ord);
               this.$store.dispatch('loadAds',{ reset: true });
-              this.$store.dispatch('loadPosts',{ reset: true});
-              }
+                           }
             },
         onSubmitLoginForm() {
          },
@@ -138,13 +136,17 @@ import PostCard from './components/PostCard';
           return this.$store.commit('modalShowChange', true);       
         },        
         onScroll() {           
-          if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 400) {                           
-            if (this.hasMorePost) { 
+          if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {           
+            console.log(window.scrollY);                           
+             if (this.hasMorePost) { 
               this.$store.dispatch('loadAds');
-             this.$store.dispatch('loadPosts');     
+              this.scrollToUp();                 
            }
         }
-      },    
+      }, 
+      scrollToUp: function() {       
+      document.documentElement.scrollTop = document.documentElement.scrollHeight/2 + 300;
+    },   
     }
   }
 </script>

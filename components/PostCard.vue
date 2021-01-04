@@ -62,16 +62,7 @@
       post: {
         type: Object,
         required: true,
-      },
-    
-         },
-    data() {
-      return {
-     
-      };
-    },
-    methods: {
-       
+      },    
     },
   };
 

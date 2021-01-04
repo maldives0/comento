@@ -86,7 +86,8 @@ export default new Vuex.Store({ // import store from './store';
     loadPosts: throttle(async function ({ commit, state }, payload) {
       try {
         const category_id = state.checkedCategory.map(v => `&category[]=${v.id}`);
-        if (payload && payload.reset && state.ads) {
+        console.log(state.ads.length);
+        if (payload && payload.reset) {
           const res = await axios.get(`/list?page=1&ord=${state.order}${category_id.concat().join("")}&limit=10`);
 
           commit('loadPosts', {
@@ -96,7 +97,7 @@ export default new Vuex.Store({ // import store from './store';
           return;
         }
         const lastPage = state.mainPosts.length / 10;
-        if (state.hasMorePost && state.ads.length !== lastPage * 10) {
+        if (state.hasMorePost) {
           const res = await axios.get(`/list?page=${lastPage + 1}&ord=${state.order}${category_id.concat().join("")}&limit=10`);
           commit('loadPosts', {
             data: res.data.data,
@@ -106,8 +107,8 @@ export default new Vuex.Store({ // import store from './store';
       } catch (err) {
         console.error(err);
       }
-    }, 2000),
-    loadAds: throttle(async function ({ commit, state }, payload) {
+    }, 4500),
+    loadAds: throttle(async function ({ dispatch, commit, state }, payload) {
       try {
         if (payload && payload.reset) {
           const res = await axios.get(`/ads?page=1&limit=10`);
@@ -115,6 +116,7 @@ export default new Vuex.Store({ // import store from './store';
             data: res.data.data,
             reset: true,
           });
+          dispatch('loadPosts', { reset: true });
           return;
         }
         const lastPage = state.mainPosts.length / 10;
@@ -123,12 +125,13 @@ export default new Vuex.Store({ // import store from './store';
           commit('loadAds', {
             data: res.data.data,
           });
+          dispatch('loadPosts');
           return;
         }
       } catch (err) {
         console.error(err);
       }
-    }, 2000),
+    }, 4500),
     async loadCategory({ commit }, payload) {
       try {
         const res = await axios.get(`/category`)
@@ -152,7 +155,7 @@ export default new Vuex.Store({ // import store from './store';
     searchPosts: throttle(async function ({ commit, state }, payload) {
       try {
         const category_id = state.checkedCategory.map(v => `&category[]=${v.id}`);
-        if (payload && payload.reset && state.ads) {
+        if (payload && payload.reset) {
           const res = await axios.get(`/search?value=${payload.value}?page=1&ord=${state.order}${category_id.concat().join("")}&limit=10`);
           commit('loadPosts', {
             data: res.data.data,
@@ -161,7 +164,7 @@ export default new Vuex.Store({ // import store from './store';
           return;
         }
         const lastPage = state.mainPosts.length / 10;
-        if (state.hasMorePost && state.ads.length !== lastPage * 10) {
+        if (state.hasMorePost) {
           const res = await axios.get(`/serach?value=${payload.value}?page=${lastPage}&ord=${state.order}${category_id.concat().join("")}&limit=10`);
           commit('loadPosts', {
             data: res.data.data,
@@ -171,7 +174,7 @@ export default new Vuex.Store({ // import store from './store';
       } catch (err) {
         console.error(err);
       }
-    }, 2000),
+    }, 4500),
 
 
   }, // 비동기를 사용할때, 또는 여러 뮤테이션을 연달아 실행할 때

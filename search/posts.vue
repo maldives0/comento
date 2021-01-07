@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="header">
-      <span>[2020.01.04.] 정주영</span> 
       <div class="search-button-layout">
         <form @submit.prevent="onSubmitSearchForm">
           <input 

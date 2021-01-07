@@ -40,6 +40,10 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
     ],
+    devServer: {
+        historyApiFallback: true,
+        publicPath: '/dist',
+    },
 
     output: {
         filename: '[name].js',

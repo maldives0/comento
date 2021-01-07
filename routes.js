@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from './Home';
+
 
 Vue.use(VueRouter);
+const Home = () => import(/* webpackChunkName: "Home" */ './Home');
 const View = () => import(/* webpackChunkName: "view" */ './_id/view');
 const Search = () => import(/* webpackChunkName: "search" */ './search/posts');
 export default new VueRouter({

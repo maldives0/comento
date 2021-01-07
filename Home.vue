@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="header">
-      <span>[2020.01.04.] 정주영</span> 
       <div class="search-button-layout">
         <form @submit.prevent="onSubmitSearchForm">
           <input 
@@ -59,7 +58,7 @@
 
 <script>
 import FilterModal from './components/FilterModal';
-import PostCard from './components/PostCard';
+// import PostCard from './components/PostCard';
  import store from './store';
  import router from './routes';
  
@@ -67,7 +66,7 @@ import PostCard from './components/PostCard';
    store,
    router,
    components: {
-      PostCard,
+      PostCard: () => import('./components/PostCard'),
       FilterModal,     
     },
  
